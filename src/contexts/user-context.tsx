@@ -1,0 +1,122 @@
+"use client";
+import LoadingAnimation from "@/app/app/_components/loading-page";
+import { fetchApi } from "@/services/fetchApi";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+interface UserContextParams {
+  user: User | null;
+  loadingUser: boolean;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "ADMIN" | "USER";
+  loggedWithGoogle: boolean;
+  avatarUrl: string;
+  acceptNotifications: boolean;
+}
+
+const UserContext = createContext({} as UserContextParams);
+
+interface UserProviderProps {
+  children: ReactNode;
+}
+export function UserProvider({ children }: UserProviderProps) {
+  const { data, status } = useSession();
+  const router = useRouter();
+
+  const [user, setUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  async function getUser() {
+    const userEmail = data?.user.email ?? "user-not-found";
+
+    const response = await fetchApi(`/users/by-email/`, {
+      method: 'POST',
+      body: JSON.stringify({
+        email: userEmail,
+      }),
+    });
+
+    if (!response.ok) {
+      loadOut();
+      setLoadingUser(false);
+      return;
+    }
+
+    const dataResponse = await response.json();
+
+    setLoadingUser(false);
+
+    setUser(dataResponse);
+  }
+
+  async function checkUser() {
+    if (user && user.role === "ADMIN") {
+      return;
+    }
+
+    const responseCheck = await fetchApi(
+      `/subscription/check-sub/${user?.id}`,
+    );
+
+    if (!responseCheck.ok) {
+      return;
+    }
+
+    const resp = await responseCheck.json();
+
+    if (resp.checked) {
+      return;
+    }
+
+    if (!resp.checked) {
+      router.replace(`/unpaid/${user?.id}`);
+      return;
+    }
+  }
+
+  async function loadOut() {
+    await signOut({
+      redirect: false,
+    });
+
+    window.location.href = "/";
+  }
+
+  useEffect(() => {
+    if (status === "authenticated" && data.user) {
+      getUser();
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (!loadingUser) {
+      checkUser();
+    }
+  }, [loadingUser]);
+
+  return (
+    <UserContext.Provider value={{ user, loadingUser }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
+
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser deve ser usado dentro de um UserProvider");
+  }
+  return context;
+};
