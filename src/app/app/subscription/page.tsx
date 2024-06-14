@@ -47,8 +47,6 @@ export default function Plan() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const router = useRouter();
-
   async function getUser() {
     const response = await fetchApi(
       `/subscription/${user?.id}`,
@@ -56,7 +54,14 @@ export default function Plan() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+
+      
+      toast.error(respError.error, {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       setLoading(false);
       return;
     }

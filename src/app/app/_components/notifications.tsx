@@ -28,7 +28,12 @@ export function Notifications() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
@@ -42,7 +47,12 @@ export function Notifications() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
@@ -55,7 +65,12 @@ export function Notifications() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 

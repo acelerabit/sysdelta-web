@@ -131,7 +131,12 @@ export function ManagePlans() {
 
     if (!response.ok) {
       setLoading(false);
-      toast.error("Erro ao buscar planos");
+      toast.error("Erro ao buscar planos",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
@@ -159,11 +164,21 @@ export function ManagePlans() {
     });
 
     if (!response.ok) {
-      toast.error("Erro ao criar plano");
+      toast.error("Erro ao criar plano",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano criado com sucesso");
+    toast.success("Plano criado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     reset();
     window.location.reload();
   };
@@ -193,11 +208,21 @@ export function ManagePlans() {
     const response = await fetchApi(`/plans/deactivate/plan/${planId}`);
 
     if (!response.ok) {
-      toast.error("Erro ao inativar plano");
+      toast.error("Erro ao inativar plano",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano inativado com sucesso");
+    toast.success("Plano inativado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
 
     const plansUpdated = plans.map((plan) => {
       if (plan.id === planId) {
@@ -217,11 +242,21 @@ export function ManagePlans() {
     const response = await fetchApi(`/plans/activate/plan/${planId}`);
 
     if (!response.ok) {
-      toast.error("Erro ao ativar plano");
+      toast.error("Erro ao ativar plano",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano ativado com sucesso");
+    toast.success("Plano ativado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
 
     const plansUpdated = plans.map((plan) => {
       if (plan.id === planId) {
@@ -240,11 +275,21 @@ export function ManagePlans() {
     const response = await fetchApi(`/plans/unpublish/plan/${planId}`);
 
     if (!response.ok) {
-      toast.error("Erro ao tornar plano não público");
+      toast.error("Erro ao tornar plano não público",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano publicado com sucesso");
+    toast.success("Operação realizada com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
 
     const plansUpdated = plans.map((plan) => {
       if (plan.id === planId) {
@@ -266,14 +311,24 @@ export function ManagePlans() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
     const plansUpdated = plans.filter((plan) => plan.id !== planId);
     setPlans(plansUpdated);
 
-    toast.success("Plano deletado com sucesso");
+    toast.success("Plano deletado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
   }
 
   // const priceWatch = useWatch({
@@ -286,11 +341,21 @@ export function ManagePlans() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano públicado com sucesso");
+    toast.success("Operação realizada com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
 
     const plansUpdated = plans.map((plan) => {
       if (plan.id === planId) {
@@ -307,12 +372,20 @@ export function ManagePlans() {
 
   async function turnDefault() {
     const response = await fetchApi(`/plans/turn-default/${turnInDefaultPlan}`);
+
     if (!response.ok) {
       const respError = await response.json();
       toast.error(respError.error);
       return;
     }
-    toast.success("Plano transformado em default com sucesso");
+
+    toast.success("Operação realizada com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
+
     const plansUpdated = plans.map((plan) => {
       if (plan.id === turnInDefaultPlan) {
         plan.isDefault = !plan.isDefault;

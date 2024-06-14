@@ -36,11 +36,23 @@ export default function Login() {
     });
 
     if (result?.error) {
-      toast.error("E-mail ou senha inválidas!");
+      toast.error("E-mail ou senha inválidas!",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Login realizado com sucesso");
+    
+
+    toast.success("Login realizado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     window.location.href =
       process.env.NEXT_PUBLIC_BASE_URL_AFTER_LOGIN ?? "/app";
   }

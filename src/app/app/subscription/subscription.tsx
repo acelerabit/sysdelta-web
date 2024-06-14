@@ -33,7 +33,12 @@ export function Subscription({ planId = null }: SubscriptionProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.message);
+      toast.error(respError.message,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       setLoading(false);
       return;
     }

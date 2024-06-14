@@ -56,11 +56,21 @@ export default function RedefinePassword({
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Senha salva com sucesso");
+    toast.success("Senha salva com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     window.location.href = "/";
   };
 

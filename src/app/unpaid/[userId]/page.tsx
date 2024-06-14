@@ -94,11 +94,21 @@ export default function Unpaid({ params }: UnpaidProps) {
     if (!response.ok) {
       const responseError = await response.json();
 
-      toast.error(responseError.error);
+      toast.error(responseError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Assinatura cancelada com sucesso");
+    toast.success("Assinatura cancelada com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     turnFreeOnOpenChange();
     router.replace("/projects");
   }
@@ -109,7 +119,12 @@ export default function Unpaid({ params }: UnpaidProps) {
     );
 
     if (!response.ok) {
-      toast.error("Não foi possivel buscar os planos para esse usuário");
+      toast.error("Não foi possivel buscar os planos para esse usuário",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
@@ -122,7 +137,12 @@ export default function Unpaid({ params }: UnpaidProps) {
     const response = await fetchApi(`/subscription/${params.userId}`);
 
     if (!response.ok) {
-      toast.error("Não foi possivel buscar a assinatura");
+      toast.error("Não foi possivel buscar a assinatura",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       setLoading(false);
       return;
     }
@@ -168,11 +188,21 @@ export default function Unpaid({ params }: UnpaidProps) {
     });
 
     if (!response.ok) {
-      toast.error("Erro ao associar plano");
+      toast.error("Erro ao associar plano",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano associado com sucesso");
+    toast.success("Plano associado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     changePlanOnOpenChange();
     router.replace("/projects");
   }

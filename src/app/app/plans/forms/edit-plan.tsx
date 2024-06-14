@@ -79,11 +79,21 @@ export function EditForm({ plan }: EditPlanProps) {
     });
 
     if (!response.ok) {
-      toast.error("Erro ao editar plano");
+      toast.error("Erro ao editar plano",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Plano editado com sucesso");
+    toast.success("Plano editado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     window.location.reload();
   };
 

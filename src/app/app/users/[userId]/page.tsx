@@ -71,11 +71,21 @@ export default function User({ params }: UserProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("E-mail enviado com sucesso");
+    toast.success("E-mail enviado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
   }
 
   async function getUser() {
@@ -83,7 +93,12 @@ export default function User({ params }: UserProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 

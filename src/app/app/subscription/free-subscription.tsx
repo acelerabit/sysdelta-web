@@ -23,6 +23,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Badge } from "@/components/ui/badge";
 
 interface FreeSubscriptionProps {
   subscription: Subscription;
@@ -83,7 +84,12 @@ export function FreeSubscription({ subscription }: FreeSubscriptionProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       setLoadingPlans(false);
       return;
     }
@@ -162,7 +168,7 @@ export function FreeSubscription({ subscription }: FreeSubscriptionProps) {
                 `/ Cobrado a cada ${subscription.plan.durationInMonths}`}
             </p>
 
-            <span>{subscription.active ? "ativo" : "inativo"}</span>
+            <Badge className="bg-slate-900 w-fit">{subscription.active ? "ativa" : "inativa"}</Badge>
           </div>
         </div>
 

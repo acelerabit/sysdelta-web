@@ -52,11 +52,21 @@ export function CheckoutForm({ customerId, planId = null }: CheckoutFormProps) {
             }),
           }).then((res) => {
             if (!res.ok) {
-              toast.error("Não foi possivel ativar a sua inscrição");
+              toast.error("Não foi possivel ativar a sua inscrição",{
+                action: {
+                  label: "Undo",
+                  onClick: () => console.log("Undo"),
+                },
+              });
               return;
             }
 
-            toast.success("Inscrição ativada com sucesso");
+            toast.success("Inscrição ativada com sucesso",{
+              action: {
+                label: "Undo",
+                onClick: () => console.log("Undo"),
+              },
+            });
             // window.location.href = '/manage-plan'
             router.replace("/app/subscription");
           });

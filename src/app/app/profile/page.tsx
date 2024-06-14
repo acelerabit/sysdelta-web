@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import LoadingAnimation from "../_components/loading-page";
 import { ProfileForm } from "./_components/profile-form";
 import { UploadProfile } from "./_components/upload-profile";
+import { NotificationForm } from "./_components/notification-form";
 
 export default function Profile() {
   const { loadingUser, user } = useUser();
@@ -32,16 +33,27 @@ export default function Profile() {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("E-mail enviado com sucesso");
+    toast.success("E-mail enviado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
   }
 
-  if (loadingUser) {
+  if (loadingUser || !user) {
     return <LoadingAnimation />;
   }
+
 
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
@@ -90,21 +102,8 @@ export default function Profile() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="flex flex-col gap-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="include" defaultChecked />
-                    <label
-                      htmlFor="include"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      I accept to receive notifications.
-                    </label>
-                  </div>
-                </form>
+                <NotificationForm user={user} />
               </CardContent>
-              <CardFooter className="border-t px-6 py-4">
-                <Button>Save</Button>
-              </CardFooter>
             </Card>
           </div>
         </TabsContent>

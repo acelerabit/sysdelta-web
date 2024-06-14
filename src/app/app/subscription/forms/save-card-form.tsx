@@ -70,7 +70,12 @@ export function SaveCardForm({ userId }: SaveCardProps) {
     });
 
     if (!paymentMethod) {
-      toast.error("Não foi possivel cadastrar nova forma de pagamento");
+      toast.error("Não foi possivel cadastrar nova forma de pagamento",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
     }
 
     const requestData = {
@@ -88,13 +93,23 @@ export function SaveCardForm({ userId }: SaveCardProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
     const data = await response.json();
 
-    toast.success("Cartão cadastrado com sucesso");
+    toast.success("Cartão cadastrado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     window.location.reload()
   };
 

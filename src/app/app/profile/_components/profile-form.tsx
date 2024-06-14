@@ -61,13 +61,23 @@ export function ProfileForm() {
     if (!response.ok) {
       const respError = await response.json();
 
-      toast.error(respError.error);
+      toast.error(respError.error,{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
     const dataResp = await response.json();
 
-    toast.success("Usuário editado com sucesso");
+    toast.success("Usuário editado com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
   }
 
   return (

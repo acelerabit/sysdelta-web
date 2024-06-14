@@ -7,6 +7,7 @@ import { useUser } from "@/contexts/user-context";
 import { Subscription as SubscriptionPaymentForm } from "./subscription";
 import { fetchApi } from "@/services/fetchApi";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface FreeSubscriptionProps {
   subscription: Subscription;
@@ -61,7 +62,7 @@ export function TrialSubscription({
     <>
       <p className="text-3xl mb-4">Plano atual</p>
       <div className="w-full grid grid-cols-2 items-start gap-4 p-2">
-        <Card className="flex flex-col gap-4 col-span-1 h-full">
+        <Card className="flex flex-col gap-4 p-4 col-span-1 h-full">
           <div className="w-full flex items-center justify-between">
             <div className="flex flex-col gap-2">
               <p>{subscription.plan.name}</p>
@@ -75,7 +76,7 @@ export function TrialSubscription({
                 {subscription.plan.durationInMonths > 0 && `/ Cobrado a cada ${subscription.plan.durationInMonths}`}
               </p>
 
-              <span>{subscription.active ? "ativo" : "inativo"}</span>
+              <Badge className="bg-slate-900 w-fit">{subscription.active ? "ativa" : "inativa"}</Badge>
             </div>
           </div>
         </Card>

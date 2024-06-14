@@ -50,7 +50,12 @@ export default function SignUp() {
     const response = await fetchApi(`/plans/default`);
 
     if (!response.ok) {
-      toast.error("Erro ao buscar planos");
+      toast.error("Erro ao buscar planos",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
@@ -78,11 +83,21 @@ export default function SignUp() {
     );
 
     if (!response.ok) {
-      toast.error("Erro ao criar conta");
+      toast.error("Erro ao criar conta",{
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
       return;
     }
 
-    toast.success("Conta criada com sucesso");
+    toast.success("Conta criada com sucesso",{
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
     router.replace("/");
   }
 
