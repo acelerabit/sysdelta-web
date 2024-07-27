@@ -8,22 +8,22 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/contexts/user-context";
 import { fetchApi } from "@/services/fetchApi";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { formatSignedDate, formatToUTC } from "@/utils/formatDate";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Badge } from "@/components/ui/badge";
+import { CheckIcon, X } from "lucide-react";
 
 interface FreeSubscriptionProps {
   subscription: Subscription;
@@ -34,6 +34,12 @@ interface Payment {
   completed: boolean;
   value: number;
   voucher: string;
+  paymentDate?: string;
+  plan: {
+    name: string;
+  };
+  status: PaymentStatus;
+  createdAt: Date;
 }
 
 export interface Plan {
@@ -43,7 +49,31 @@ export interface Plan {
   value: number;
   trialDays: number;
   durationInMonths: number;
+  canIntegrate: boolean;
+  qtdReports: number;
+  qtdProjects: number;
 }
+
+type PaymentStatus = "draft" | "open" | "paid" | "uncollectible" | "void";
+
+const paymentTypes = {
+  draft: "Criada",
+  open: "Em aberto",
+  paid: "Paga",
+  uncollectible: "Não recolhida",
+  void: "Vazia",
+};
+
+const subStatus = {
+  active: 'Ativo',
+  canceled: 'Cancelado',
+  incomplete: 'Incompleto',
+  incomplete_expired: 'Expirado',
+  past_due: 'Vencido',
+  paused: 'Pausado',
+  trialing: 'Teste',
+  unpaid: 'Pagamento pendente',
+};
 
 const FormSchema = z.object({
   planId: z.string({
@@ -104,8 +134,8 @@ export function FreeSubscription({ subscription }: FreeSubscriptionProps) {
     setLoadingPlans(false);
   }
 
-  function pushToPayment() {
-    router.push(`/app/subscription/payment?planId=${planId}`);
+  function pushToPayment(planId: string) {
+    router.push(`/app/subscription/subscription-page?planId=${planId}&customerId=${user?.id}`);
   }
 
   function handleSelectPlan(id: string) {
@@ -152,126 +182,229 @@ export function FreeSubscription({ subscription }: FreeSubscriptionProps) {
 
   return (
     <>
-      <p className="text-3xl mb-4">Plano atual</p>
-      <Card className="flex flex-col gap-4 p-4">
-        <div className="w-full flex items-center justify-between">
-          <div className="flex flex-col gap-2">
-            <p>{subscription.plan.name}</p>
-            <p>
+    <p className="text-3xl mb-4">Plano atual</p>
+    <div className="flex flex-col gap-4 py-8">
+
+      <Card className="w-full col-span-2 max-w-none">
+        <CardHeader>
+          <CardTitle className="capitalize flex items-center">
+            {subscription.plan.name}{" "}
+            <Badge className="w-fit ml-4">
+              {subStatus[subscription.status]}
+            </Badge>
+          </CardTitle>
+          <CardDescription>
+            {formatSignedDate(subscription.createdAt)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Valor mensal:</span>
+            <span className="font-medium">
               {new Intl.NumberFormat("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               })
                 .format(subscription.value / 100)
-                .toUpperCase()}{" "}
-              {subscription.plan.durationInMonths > 0 &&
-                `/ Cobrado a cada ${subscription.plan.durationInMonths}`}
-            </p>
+                .toUpperCase()}
+            </span>
+          </div>
+          <Separator />
+          <div>
+            <div className="font-medium">Benefícios incluídos:</div>
+            <ul className="mt-2 space-y-2 text-muted-foreground">
+              {subscription.plan.trialDays > 0 && (
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="h-4 w-4 text-green-500" />
+                  {subscription.plan.trialDays} Dias de período de teste
+                </li>
+              )}
 
-            <Badge className="bg-slate-900 w-fit">{subscription.active ? "ativa" : "inativa"}</Badge>
+              <li className="flex items-center gap-2">
+                {subscription.plan.canIntegrate ? (
+                  <CheckIcon className="h-4 w-4 text-green-500" />
+                ) : (
+                  <X className="h-4 w-4 text-red-500" />
+                )}{" "}
+                Tem acesso a integrações
+              </li>
+
+              <li className="flex items-center gap-2">
+                <CheckIcon className="h-4 w-4 text-green-500" />
+                Poderá criar{" "}
+                {subscription.plan.qtdProjects === -1
+                  ? "projetos ilimitados"
+                  : `${subscription.plan.qtdProjects} projetos`}
+              </li>
+
+              <li className="flex items-center gap-2">
+                <CheckIcon className="h-4 w-4 text-green-500" />
+                Poderá criar{" "}
+                {subscription.plan.qtdReports === -1
+                  ? "reports ilimitados"
+                  : `${subscription.plan.qtdReports} reports`}
+              </li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+
+      {loadingPlans ? (
+        <Skeleton className="h-56 w-full" />
+      ) : (
+        <div>
+          <div className="w-full flex flex-col">
+            <h3 className="mb-5 mt-5 text-lg font-medium text-gray-900">
+              Selecione um plano para fazer parte
+            </h3>
+
+            {plans.length > 0 ? (
+
+              <div className="grid gap-6 md:grid-cols-2">
+                {plans.map((plan) => {
+                  return (
+                    <div
+                      key={plan.id}
+                      className="flex flex-col rounded-lg border border-input bg-background p-6 shadow-sm"
+                    >
+                      <div className="space-y-2">
+                        <h3 className="text-2xl font-bold capitalize">
+                          {plan.name}
+                        </h3>
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">
+                            Valor mensal:
+                          </span>
+                          <span className="font-medium">
+                            {new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                              .format(plan.value / 100)
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                        <Separator />
+
+                        <ul className="mt-2 space-y-2 text-muted-foreground">
+                          {plan.trialDays > 0 && (
+                            <li className="flex items-center gap-2 text-sm">
+                              <CheckIcon className="h-4 w-4 text-green-500" />
+                              {plan.trialDays} Dias de período de teste
+                            </li>
+                          )}
+
+                          <li className="flex items-center gap-2 text-sm">
+                            {plan.canIntegrate ? (
+                              <CheckIcon className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <X className="h-4 w-4 text-red-500" />
+                            )}{" "}
+                            Tem acesso a integrações
+                          </li>
+
+                          <li className="flex items-center gap-2 text-sm">
+                            <CheckIcon className="h-4 w-4 text-green-500" />
+                            Poderá criar{" "}
+                            {plan.qtdProjects === -1
+                              ? "projetos ilimitados"
+                              : `${plan.qtdProjects} projetos`}
+                          </li>
+
+                          <li className="flex items-center gap-2 text-sm">
+                            <CheckIcon className="h-4 w-4 text-green-500" />
+                            Poderá criar{" "}
+                            {plan.qtdReports === -1
+                              ? "reports ilimitados"
+                              : `${plan.qtdReports} reports`}
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="my-6 flex flex-col gap-4" />
+                      <div className="mt-auto">
+                        <Button
+                          className="w-full disabled:cursor-not-allowed"
+                          onClick={() => pushToPayment(plan.id)}
+                          disabled={plan.value <= 0}
+                        >
+                          Ir para pagina de pagamento
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div>
+                <p>Não há planos disponiveis</p>
+              </div>
+            )}
           </div>
         </div>
+      )}
 
-        {loadingPlans ? (
-          <Skeleton className="h-56 w-full" />
-        ) : (
-          <div>
-            <div className="w-full flex flex-col">
-              <h3 className="mb-5 mt-5 text-lg font-medium text-gray-900">
-                Selecione um plano para fazer parte
-              </h3>
-
-              {plans.length > 0 ? (
-                <form className="w-full">
-                  <RadioGroup.Root
-                    className="w-full flex gap-2.5 p-2"
-                    defaultValue={subscription.plan.id}
-                  >
-                    {plans.map((plan) => (
-                      <RadioGroup.Item
-                        key={plan.id}
-                        className="w-80 border-2 border-zinc-200 group data-[state=checked]:border-violet-500 rounded-md flex flex-col items-center justify-center p-4 gap-2"
-                        value={plan.id}
-                        id={plan.id}
-                        onClick={() => handleSelectPlan(plan.id)}
-                      >
-                        <p className="text-xl text-bold text-zinc-400 group-data-[state=checked]:text-violet-500">
-                          {plan.name}
-                        </p>
-
-                        <p className="text-2xl text-bold text-zinc-400 group-data-[state=checked]:text-violet-500">
-                          {new Intl.NumberFormat("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })
-                            .format(plan.value / 100)
-                            .toUpperCase()}
-                        </p>
-
-                        <div className="flex items-center justify-center flex-col gap-2">
-                          <p className="text-sm text-bold text-zinc-400 group-data-[state=checked]:text-violet-500">
-                            A cada {plan.durationInMonths} meses
-                          </p>
-
-                          {plan.trialDays > 0 && (
-                            <p className="text-sm text-bold text-zinc-400 group-data-[state=checked]:text-violet-500">
-                              {plan.trialDays} dias de periodo de teste grátis
-                            </p>
-                          )}
-                        </div>
-                      </RadioGroup.Item>
-                    ))}
-                  </RadioGroup.Root>
-
-                  <Button
-                    className="float-right mt-2"
-                    onClick={pushToPayment}
-                    disabled={disablePaymentButton}
-                    type="button"
-                  >
-                    Ir para página de pagamento
-                  </Button>
-                </form>
-              ) : (
-                <div>
-                  <p>Não há planos disponiveis</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        
-        {hasPayments && (
+      {hasPayments && (
+        <Card className="p-4 mt-8">
           <div className="flex flex-col gap-2">
-            <p className="text-xl">Meus pagamentos</p>
+            <p className="text-xl font-medium mb-4">Meus pagamentos</p>
 
-            {payments.map((payment) => (
-              <Card key={payment.id} className="py-2 flex flex-col gap-2">
-                <p className="text-lg">Fatura</p>
-
-                <p>
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })
-                    .format(payment.value)
-                    .toUpperCase()}
-                </p>
-
-                <a
-                  hrefLang={payment.voucher}
-                  href={payment.voucher}
-                  target="_blank"
-                  className="text-violet-500 hover:text-violet-700 cursor-pointer"
+            {payments.map((payment, planIndex) => (
+              <>
+                <div
+                  key={payment.id}
+                  className="py-2 flex items-start justify-between gap-2"
                 >
-                  Ver fatura
-                </a>
-              </Card>
+                  <div className="flex flex-col gap-2">
+                    <p>Fatura</p>
+
+                    {payment?.paymentDate && (
+                      <p className="text-sm">
+                        Pago em: {formatToUTC(new Date(payment.paymentDate))}
+                      </p>
+                    )}
+
+                    <p className="text-sm">
+                      Data de Criação: {formatToUTC(payment.createdAt)}
+                    </p>
+
+                    <a
+                      hrefLang={payment.voucher}
+                      href={payment.voucher}
+                      target="_blank"
+                      className="text-violet-500 hover:text-violet-700 cursor-pointer text-sm"
+                    >
+                      Ver Fatura
+                    </a>
+                  </div>
+
+                  <div className="flex flex-col items-start justify-end gap-2">
+                    <p>
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                        .format(payment.value)
+                        .toUpperCase()}
+                    </p>
+
+                    {payment.status && (
+                      <Badge className="w-full flex items-center justify-center">
+                        {paymentTypes[payment.status]}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {payments.length > 1 && planIndex !== payments.length - 1 && (
+                  <Separator />
+                )}
+              </>
             ))}
           </div>
-        )}
-      </Card>
-    </>
+        </Card>
+      )}
+    </div>
+  </>
   );
 }

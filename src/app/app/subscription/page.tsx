@@ -7,17 +7,25 @@ import { fetchApi } from "@/services/fetchApi";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FreeSubscription } from "./free-subscription";
-import { Subscription } from "./subscription";
 import { TrialSubscription } from "./trial-subscription";
 import { ChargeSubscription } from "./charge-subscription";
 
+type UserPlanStatus =
+  | 'active'
+  | 'canceled'
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'past_due'
+  | 'paused'
+  | 'trialing'
+  | 'unpaid';
 
 export interface Subscription {
   active: boolean;
   createdAt: Date;
   value: number;
   id: string;
-  status: string;
+  status: UserPlanStatus;
   paymentMethodId: string;
   plan: {
     id: string;
@@ -25,6 +33,9 @@ export interface Subscription {
     durationInMonths: number;
     value: number;
     trialDays: number;
+    canIntegrate: boolean;
+    qtdReports: number;
+    qtdProjects: number;
   };
   user: {
     id: string;

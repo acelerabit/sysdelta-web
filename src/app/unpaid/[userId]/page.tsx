@@ -110,7 +110,7 @@ export default function Unpaid({ params }: UnpaidProps) {
       },
     });
     turnFreeOnOpenChange();
-    router.replace("/projects");
+    router.replace("/app/dashboard");
   }
 
   async function getPlans() {
@@ -204,7 +204,7 @@ export default function Unpaid({ params }: UnpaidProps) {
       },
     });
     changePlanOnOpenChange();
-    router.replace("/projects");
+    router.replace("/app/dashboard");
   }
 
   useEffect(() => {

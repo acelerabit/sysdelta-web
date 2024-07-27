@@ -115,12 +115,18 @@ export function SaveCardForm({ userId }: SaveCardProps) {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col h-full w-full gap-4">
         <label htmlFor="card">Dados do cartão</label>
 
-        <CardElement id="card" options={{ hidePostalCode: true }} className="p-4 border rounded-md focus:ring-blue-500 border-blue-500" />
+        <div className="flex flex-col h-full w-full justify-between">
+          <CardElement
+            id="card"
+            options={{ hidePostalCode: true, disableLink: true }}
+            className="p-4 border rounded-md focus:ring-blue-500 border-blue-500"
+          />
 
-        <Button type="submit">Salvar</Button>
+          <Button type="submit">Salvar</Button>
+        </div>
       </form>
     </>
   );

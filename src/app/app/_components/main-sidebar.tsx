@@ -73,6 +73,13 @@ export function MainSidebar({ children }: { children: ReactNode }) {
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                href="/app/subscriptions"
+              >
+                <LayoutList className="h-4 w-4" />
+                Subscriptions
+              </Link>
+              <Link
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                 href="/app/plans"
               >
                 <LayoutList className="h-4 w-4" />
@@ -251,6 +258,13 @@ export function MainSidebar({ children }: { children: ReactNode }) {
                     >
                       <LayoutList className="h-4 w-4" />
                       Plans
+                    </Link>
+                    <Link
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                      href="/app/subscriptions"
+                    >
+                      <LayoutList className="h-4 w-4" />
+                      Subscriptions
                     </Link>
                     <Collapsible className="grid gap-4">
                       <CollapsibleTrigger className="flex items-center gap-3 rounded-lg py-2 [&[data-state=open]>svg]:rotate-90">

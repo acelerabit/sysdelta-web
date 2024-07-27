@@ -44,32 +44,39 @@ export function CheckoutForm({ customerId, planId = null }: CheckoutFormProps) {
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       switch (paymentIntent?.status) {
         case "succeeded":
-          fetchApi(`/subscription/activate-subscription/${customerId}`, {
-            method: "POST",
-            body: JSON.stringify({
-              paymentIntentId: paymentIntent.id,
-              planId: planId ?? null,
-            }),
-          }).then((res) => {
-            if (!res.ok) {
-              toast.error("Não foi possivel ativar a sua inscrição",{
-                action: {
-                  label: "Undo",
-                  onClick: () => console.log("Undo"),
-                },
-              });
-              return;
-            }
+          // fetchApi(`/subscription/activate-subscription/${customerId}`, {
+          //   method: "POST",
+          //   body: JSON.stringify({
+          //     paymentIntentId: paymentIntent.id,
+          //     planId: planId ?? null,
+          //   }),
+          // }).then((res) => {
+          //   if (!res.ok) {
+          //     toast.error("Não foi possivel ativar a sua inscrição",{
+          //       action: {
+          //         label: "Undo",
+          //         onClick: () => console.log("Undo"),
+          //       },
+          //     });
+          //     return;
+          //   }
 
-            toast.success("Inscrição ativada com sucesso",{
-              action: {
-                label: "Undo",
-                onClick: () => console.log("Undo"),
-              },
-            });
-            // window.location.href = '/manage-plan'
-            router.replace("/app/subscription");
+          //   toast.success("Inscrição ativada com sucesso",{
+          //     action: {
+          //       label: "Undo",
+          //       onClick: () => console.log("Undo"),
+          //     },
+          //   });
+          //   router.replace("/app/subscription");
+          // });
+
+          toast.success("Inscrição ativada com sucesso",{
+            action: {
+              label: "Undo",
+              onClick: () => console.log("Undo"),
+            },
           });
+          router.replace("/app/subscription");
 
           removeCookie();
 

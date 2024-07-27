@@ -9,6 +9,16 @@ export function formatDate(date: string) {
   return new Intl.DateTimeFormat('pt-br').format(dateFormat);
 }
 
+export function formatSignedDate(dateInput: Date | string): string {
+  // Converte a data de entrada para um objeto dayjs
+  const date = dayjs(dateInput);
+
+  // Formata a data conforme necessário
+  const formattedDate = `Assinado em ${date.format('D [de] MMMM, YYYY')}`;
+
+  return formattedDate;
+}
+
 
 export function formatToUTC(date: Date) {
   return dayjs(date).utc().format('DD/MM/YYYY');
