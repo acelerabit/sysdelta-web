@@ -4,14 +4,6 @@
 
 import { Badge } from "@/components/ui/badge";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -34,6 +26,8 @@ import { fetchApi } from "@/services/fetchApi";
 import { useState, useEffect } from "react";
 import { EllipsisVertical } from "lucide-react";
 import Link from "next/link";
+import { AddUserDialog } from "./add-user-dialog";
+import useModal from "@/hooks/use-modal";
 
 interface User {
   id: string;
@@ -42,14 +36,18 @@ interface User {
   role: string;
 }
 
-export function TableUsers() {
+interface TableUsersProps {
+  action?: boolean;
+}
+
+export function TableUsers({ action = false }: TableUsersProps) {
   const [users, setUsers] = useState<User[]>([]);
 
   const [page, setPage] = useState(1);
-
+  const [loadingUsers, setSetLoadingUsers] = useState(true);
   const itemsPerPage = 2;
 
-  const [loadingUsers, setSetLoadingUsers] = useState(true);
+  const {isOpen, onOpenChange} = useModal()
 
   async function getUsers() {
     setSetLoadingUsers(true);
@@ -93,81 +91,92 @@ export function TableUsers() {
   };
 
   return (
-    <Card className="col-span-2">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-semibold">Users</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Table>
-          <TableCaption>A list of all users.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
+    <>
+      <Card className="col-span-2">
+        {action && (
+          <CardHeader className="flex flex-row items-center justify-end space-y-0 pb-2">
+            <Button onClick={onOpenChange}>Adicionar usuário</Button>
+          </CardHeader>
+        )}
+        <CardContent className="space-y-4">
+          <Table>
+            <TableCaption>Lista de usuários.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
 
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users &&
-              users.map((user) => {
-                return (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">
-                      {user.id.substring(0, 10)}
-                    </TableCell>
-                    <TableCell className="font-medium truncate">
-                      {user.name}
-                    </TableCell>
-                    <TableCell className="font-medium truncate">
-                      {user.email}
-                    </TableCell>
-                    <TableCell className="font-medium truncate">
-                      <Badge
-                        className={`${
-                          user.role === "ADMIN"
-                            ? rolesBadges.ADMIN
-                            : rolesBadges.USER
-                        }`}
-                      >
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <EllipsisVertical className="h-5 w-5" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem className="cursor-pointer" asChild>
-                            <Link href={`/app/users/${user.id}`}>Ver usuário</Link>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-        <div className="w-full flex gap-2 items-center justify-end">
-          <Button
-            className="disabled:cursor-not-allowed"
-            disabled={page === 1}
-            onClick={previousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            className="disabled:cursor-not-allowed"
-            disabled={users.length < itemsPerPage}
-            onClick={nextPage}
-          >
-            Next
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users &&
+                users.map((user) => {
+                  return (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">
+                        {user.id.substring(0, 10)}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        {user.name}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        {user.email}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        <Badge
+                          className={`${
+                            user.role === "ADMIN"
+                              ? rolesBadges.ADMIN
+                              : rolesBadges.USER
+                          }`}
+                        >
+                          {user.role}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <EllipsisVertical className="h-5 w-5" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              asChild
+                            >
+                              <Link href={`/app/users/${user.id}`}>
+                                Ver usuário
+                              </Link>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+          <div className="w-full flex gap-2 items-center justify-end">
+            <Button
+              className="disabled:cursor-not-allowed"
+              disabled={page === 1}
+              onClick={previousPage}
+            >
+              Previous
+            </Button>
+            <Button
+              className="disabled:cursor-not-allowed"
+              disabled={users.length < itemsPerPage}
+              onClick={nextPage}
+            >
+              Next
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <AddUserDialog open={isOpen} onOpenChange={onOpenChange} />
+    </>
   );
 }

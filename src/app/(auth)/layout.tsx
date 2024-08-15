@@ -8,7 +8,8 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
   const { user, loadingUser } = useUser();
 
   if (!loadingUser && user) {
-    redirect("/app/dashboard");
+    // fazer uma diferenciação ded acordo com a role do usuário
+    redirect("/app");
   }
 
   return (

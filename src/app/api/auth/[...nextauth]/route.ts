@@ -43,10 +43,6 @@ const nextAuthOptions: NextAuthOptions = {
 
         const result = await response.json()
 
-        if (result.subscriptionValue != null && result.subscriptionValue <= 0) {
-          cookiesStore.set('sub-free', 'sub-free')
-        }
-
         if (result && response.ok) {
           return {
             name: result.user.name,
@@ -137,10 +133,6 @@ const nextAuthOptions: NextAuthOptions = {
 
           const result = await response.json()
 
-          if (result.subscriptionValue != null && result.subscriptionValue <= 0) {
-            cookiesStore.set('sub-free', 'sub-free')
-          }
-
           return result
         }
 
@@ -168,10 +160,6 @@ const nextAuthOptions: NextAuthOptions = {
 
 
         const result = await response.json()
-
-        if (result.subscriptionValue != null && result.subscriptionValue <= 0) {
-          cookiesStore.set('sub-free', 'sub-free')
-        }
 
         if (result && response.ok) {
           return {

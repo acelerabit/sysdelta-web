@@ -8,6 +8,8 @@ export const userSubject = z.tuple(
       z.literal('get'),
       z.literal('update'),
       z.literal('delete'),
+      z.literal('create'),
+      z.literal('list'),
     ]),
     z.union([z.literal('User'), userSchema])
   ]

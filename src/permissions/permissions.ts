@@ -10,12 +10,39 @@ export const permissions: Record<Role, PermissionsByRole> = {
   ADMIN(user, { can, cannot }) {
     can('manage', 'all')
   },
-  USER(user, { can }) {
-    can('get', 'User')
-    can(['update', 'delete'], 'User', {
+  PRESIDENT(user, { can }) {
+    can('manage', 'User')
+    can('manage', 'Session')
+  },
+  COUNCILOR(user, { can }) {
+    can(['get', 'update'], 'User', {
       id: {
         $eq: user.id
       }
     })
+    can('get', 'Session')
+  },
+  SECRETARY(user, { can }) {
+    can(['get', 'update'], 'User', {
+      id: {
+        $eq: user.id
+      }
+    })
+    can(['get', 'update'], 'Session')
+  },
+  ASSISTANT(user, { can }) {
+    can('get', 'User')
+    can(['update'], 'User', {
+      id: {
+        $eq: user.id
+      }
+    })
+    can('list', 'User')
+    can('create', 'User', {
+      role: {
+        $eq: 'COUNCILOR'
+      }
+    })
+    can('manage', 'Session')
   }
 }

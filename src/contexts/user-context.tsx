@@ -48,6 +48,8 @@ export function UserProvider({ children }: UserProviderProps) {
       }),
     });
 
+    console.log(response)
+
     if (!response.ok) {
       loadOut();
       setLoadingUser(false);
@@ -59,31 +61,6 @@ export function UserProvider({ children }: UserProviderProps) {
     setLoadingUser(false);
 
     setUser(dataResponse);
-  }
-
-  async function checkUser() {
-    if (user && user.role === "ADMIN") {
-      return;
-    }
-
-    const responseCheck = await fetchApi(
-      `/subscription/check-sub/${user?.id}`,
-    );
-
-    if (!responseCheck.ok) {
-      return;
-    }
-
-    const resp = await responseCheck.json();
-
-    if (resp.checked) {
-      return;
-    }
-
-    if (!resp.checked) {
-      router.replace(`/unpaid/${user?.id}`);
-      return;
-    }
   }
 
   async function loadOut() {
@@ -99,12 +76,6 @@ export function UserProvider({ children }: UserProviderProps) {
       getUser();
     }
   }, [status]);
-
-  useEffect(() => {
-    if (!loadingUser) {
-      checkUser();
-    }
-  }, [loadingUser]);
 
   return (
     <UserContext.Provider value={{ user, loadingUser }}>

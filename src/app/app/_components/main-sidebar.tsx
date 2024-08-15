@@ -16,6 +16,9 @@ import {
   BarChart,
   ChevronRight,
   CreditCard,
+  FileCheck,
+  FileClock,
+  Landmark,
   LayoutList,
   Menu,
   Mountain,
@@ -27,7 +30,6 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { DropdownSettings } from "./dropdown-settings";
 import { Notifications } from "./notifications";
-import { UpgradeCard } from "./upgrade-card";
 
 export function MainSidebar({ children }: { children: ReactNode }) {
   return (
@@ -48,156 +50,37 @@ export function MainSidebar({ children }: { children: ReactNode }) {
                 href="/app/profile"
               >
                 <SquareUserRound className="h-4 w-4" />
-                Profile
+                Perfil
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/dashboard"
+                href="/app/city-councils"
               >
-                <BarChart className="h-4 w-4" />
-                Dashboard
+                <Landmark className="h-4 w-4" />
+                Câmaras
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                 href="/app/users"
               >
                 <Users className="h-4 w-4" />
-                Users
+                Usuários
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/subscription"
+                href="/app/sessions"
               >
-                <CreditCard className="h-4 w-4" />
-                Subscription
+                <FileCheck className="h-4 w-4" />
+                Sessões
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/subscriptions"
+                href="/app/logs"
               >
-                <LayoutList className="h-4 w-4" />
-                Subscriptions
+                <FileClock className="h-4 w-4" />
+                Logs
               </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/plans"
-              >
-                <LayoutList className="h-4 w-4" />
-                Plans
-              </Link>
-              <Collapsible className="grid gap-4">
-                <CollapsibleTrigger className="flex items-center gap-3 rounded-lg py-2 [&[data-state=open]>svg]:rotate-90">
-                  <div
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                    // href="#"
-                  >
-                    <ShoppingBasket className="h-4 w-4" />
-                    Products
-                  </div>
-                  <ChevronRight className="ml-auto h-5 w-5 transition-all" />
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="ml-2 p-2 space-y-4 bg-gray-100 dark:bg-gray-800">
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Shoes
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Tops & T-Shirts
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Shorts
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Hoodies & Pullovers
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Pants & Tights
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Jackets & Vests
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Tracksuits
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Jordan
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Socks
-                      </div>
-                    </Link>
-                    <Link
-                      className="group grid h-auto w-full justify-start gap-1"
-                      href="#"
-                    >
-                      <div className="text-sm font-medium leading-none group-hover:underline">
-                        Accessories & Equipment
-                      </div>
-                    </Link>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
             </nav>
-          </div>
-          <div className="p-4">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full" size="sm">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
@@ -229,142 +112,38 @@ export function MainSidebar({ children }: { children: ReactNode }) {
                       href="/app/profile"
                     >
                       <SquareUserRound className="h-4 w-4" />
-                      Profile
+                      Perfil
                     </Link>
                     <Link
                       className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/dashboard"
+                      href="/app/city-councils"
                     >
-                      <BarChart className="h-4 w-4" />
-                      Dashboard
+                      <Landmark className="h-4 w-4" />
+                      Câmaras
                     </Link>
                     <Link
                       className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                       href="/app/users"
                     >
                       <Users className="h-4 w-4" />
-                      Users
+                      Usuários
                     </Link>
                     <Link
                       className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/subscription"
+                      href="/app/sessions"
                     >
-                      <CreditCard className="h-4 w-4" />
-                      Subscription
+                      <FileCheck className="h-4 w-4" />
+                      Sessões
                     </Link>
                     <Link
                       className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/plans"
+                      href="/app/logs"
                     >
-                      <LayoutList className="h-4 w-4" />
-                      Plans
+                      <FileClock className="h-4 w-4" />
+                      Logs
                     </Link>
-                    <Link
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/subscriptions"
-                    >
-                      <LayoutList className="h-4 w-4" />
-                      Subscriptions
-                    </Link>
-                    <Collapsible className="grid gap-4">
-                      <CollapsibleTrigger className="flex items-center gap-3 rounded-lg py-2 [&[data-state=open]>svg]:rotate-90">
-                        <div
-                          className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                          // href="#"
-                        >
-                          <ShoppingBasket className="h-4 w-4" />
-                          Products
-                        </div>
-                        <ChevronRight className="ml-auto h-5 w-5 transition-all" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="ml-2 p-2 space-y-4 bg-gray-100 dark:bg-gray-800">
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Shoes
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Tops & T-Shirts
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Shorts
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Hoodies & Pullovers
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Pants & Tights
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Jackets & Vests
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Tracksuits
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Jordan
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Socks
-                            </div>
-                          </Link>
-                          <Link
-                            className="group grid h-auto w-full justify-start gap-1"
-                            href="#"
-                          >
-                            <div className="text-sm font-medium leading-none group-hover:underline">
-                              Accessories & Equipment
-                            </div>
-                          </Link>
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
                   </nav>
                 </div>
-                <UpgradeCard />
               </div>
             </SheetContent>
           </Sheet>

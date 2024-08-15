@@ -3,14 +3,14 @@ import { z } from 'zod';
 import { User } from './models/user';
 import { permissions } from './permissions';
 import { userSubject } from './subjects/user';
-import { planSubject } from './subjects/plan';
+import { sessionSubject } from './subjects/session';
 
-export * from './models/plan'
+export * from './models/session'
 export * from './models/user'
 
 const appAbilitiesSchema = z.union([
   userSubject,
-  planSubject,
+  sessionSubject,
   z.tuple([z.literal('manage'), z.literal('all')])
 ])
 

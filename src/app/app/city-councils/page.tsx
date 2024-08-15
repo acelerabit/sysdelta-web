@@ -1,17 +1,11 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { TableUsers } from "./_components/table-users";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { TableCityCouncils } from "./_components/table-city-councils";
 
-export default function Users() {
+
+export default function CityCouncils() {
   return (
     <main className="p-8 flex flex-col">
-      <h1 className="text-4xl font-semibold">Usuários</h1>
+      <h1 className="text-4xl font-semibold">Câmaras</h1>
 
       <Breadcrumb className="my-4">
         <BreadcrumbList>
@@ -20,14 +14,14 @@ export default function Users() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>users</BreadcrumbPage>
+            <BreadcrumbPage>câmaras</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <div>
-        <TableUsers action />
+        <TableCityCouncils />
       </div>
     </main>
-  );
+  )
 }
