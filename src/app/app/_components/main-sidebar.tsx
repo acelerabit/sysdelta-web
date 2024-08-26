@@ -30,8 +30,17 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { DropdownSettings } from "./dropdown-settings";
 import { Notifications } from "./notifications";
+import { ActiveLink } from "./active-link";
+import { useUser } from "@/contexts/user-context";
+import LoadingAnimation from "./loading-page";
+import { routes } from "./routes";
 
 export function MainSidebar({ children }: { children: ReactNode }) {
+  const { user, loadingUser } = useUser();
+
+  if (loadingUser || !user) {
+    return <LoadingAnimation />;
+  }
   return (
     <div className="flex min-h-screen">
       <div className="hidden lg:block lg:w-[280px] lg:shrink-0 lg:border-r lg:bg-gray-100/40 lg:dark:bg-gray-800/40">
@@ -45,41 +54,16 @@ export function MainSidebar({ children }: { children: ReactNode }) {
           </div>
           <div className="flex-1 overflow-auto py-2">
             <nav className="grid items-start px-4 text-sm font-medium">
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/profile"
-              >
-                <SquareUserRound className="h-4 w-4" />
-                Perfil
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/city-councils"
-              >
-                <Landmark className="h-4 w-4" />
-                Câmaras
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/users"
-              >
-                <Users className="h-4 w-4" />
-                Usuários
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/sessions"
-              >
-                <FileCheck className="h-4 w-4" />
-                Sessões
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="/app/logs"
-              >
-                <FileClock className="h-4 w-4" />
-                Logs
-              </Link>
+              {routes(user.role).map((route) => {
+                return (
+                  <ActiveLink
+                    key={route.href}
+                    title={route.title}
+                    href={route.href}
+                    icon={route.icon}
+                  />
+                );
+              })}
             </nav>
           </div>
         </div>
@@ -107,41 +91,16 @@ export function MainSidebar({ children }: { children: ReactNode }) {
                 </div>
                 <div className="flex-1 overflow-auto py-2">
                   <nav className="grid items-start px-4 text-sm font-medium">
-                    <Link
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/profile"
-                    >
-                      <SquareUserRound className="h-4 w-4" />
-                      Perfil
-                    </Link>
-                    <Link
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/city-councils"
-                    >
-                      <Landmark className="h-4 w-4" />
-                      Câmaras
-                    </Link>
-                    <Link
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/users"
-                    >
-                      <Users className="h-4 w-4" />
-                      Usuários
-                    </Link>
-                    <Link
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/sessions"
-                    >
-                      <FileCheck className="h-4 w-4" />
-                      Sessões
-                    </Link>
-                    <Link
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                      href="/app/logs"
-                    >
-                      <FileClock className="h-4 w-4" />
-                      Logs
-                    </Link>
+                    {routes(user.role).map((route) => {
+                      return (
+                        <ActiveLink
+                          key={route.href}
+                          title={route.title}
+                          href={route.href}
+                          icon={route.icon}
+                        />
+                      );
+                    })}
                   </nav>
                 </div>
               </div>

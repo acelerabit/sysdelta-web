@@ -26,8 +26,8 @@ import { fetchApi } from "@/services/fetchApi";
 import { useState, useEffect } from "react";
 import { EllipsisVertical } from "lucide-react";
 import Link from "next/link";
-import { AddUserDialog } from "./add-user-dialog";
 import useModal from "@/hooks/use-modal";
+import { AddUserCityCouncilDialog } from "./add-user-city-council-dialog";
 
 interface User {
   id: string;
@@ -36,23 +36,25 @@ interface User {
   role: string;
 }
 
-interface TableUsersProps {
-  action?: boolean;
+interface TableCityCouncilUsersProps {
+  cityCouncilId: string;
 }
 
-export function TableUsers({ action = false }: TableUsersProps) {
+export function TableCityCouncilUsers({
+  cityCouncilId,
+}: TableCityCouncilUsersProps) {
   const [users, setUsers] = useState<User[]>([]);
 
   const [page, setPage] = useState(1);
   const [loadingUsers, setSetLoadingUsers] = useState(true);
   const itemsPerPage = 2;
 
-  const {isOpen, onOpenChange} = useModal()
+  const { isOpen, onOpenChange } = useModal();
 
   async function getUsers() {
     setSetLoadingUsers(true);
     const fetchUsersUrl = new URL(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/admin`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/city-council/${cityCouncilId}`
     );
 
     fetchUsersUrl.searchParams.set("page", String(page));
@@ -69,6 +71,7 @@ export function TableUsers({ action = false }: TableUsersProps) {
 
     const data = await response.json();
 
+    console.log()
     setUsers(data);
     setSetLoadingUsers(false);
   }
@@ -93,11 +96,6 @@ export function TableUsers({ action = false }: TableUsersProps) {
   return (
     <>
       <Card className="col-span-2">
-        {action && (
-          <CardHeader className="flex flex-row items-center justify-end space-y-0 pb-2">
-            <Button onClick={onOpenChange}>Adicionar usuário</Button>
-          </CardHeader>
-        )}
         <CardContent className="space-y-4">
           <Table>
             <TableCaption>Lista de usuários.</TableCaption>
@@ -176,7 +174,7 @@ export function TableUsers({ action = false }: TableUsersProps) {
         </CardContent>
       </Card>
 
-      <AddUserDialog open={isOpen} onOpenChange={onOpenChange} />
+      <AddUserCityCouncilDialog open={isOpen} onOpenChange={onOpenChange} cityCouncilId={cityCouncilId} />
     </>
   );
 }

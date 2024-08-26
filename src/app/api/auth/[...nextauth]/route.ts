@@ -74,7 +74,6 @@ const nextAuthOptions: NextAuthOptions = {
   jwt: {
     maxAge: 60 * 60 * 24 * 2, // 2 dias
     encode: (params: JWTEncodeParams) => {
-
       // return a custom encoded JWT string
       return jwt.sign({
         email: params.token?.email,
@@ -113,7 +112,6 @@ const nextAuthOptions: NextAuthOptions = {
         const profileTyped: any = { ...profile }
 
         if (profileTyped?.email_verified) {
-          const cookiesStore = getCookies();
 
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login-with-google`, {
             method: 'POST',
@@ -175,8 +173,6 @@ const nextAuthOptions: NextAuthOptions = {
       return false
     },
     async jwt({ token, trigger, user, session }) {
-      // console.log(token, user, session)
-
       const { exp }: { exp: number } = token as any
       if (exp * 1000 < Date.now()) {
         return {

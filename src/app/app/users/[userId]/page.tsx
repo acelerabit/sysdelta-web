@@ -71,7 +71,7 @@ export default function User({ params }: UserProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error,{
+      toast.error(respError.error, {
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
@@ -80,7 +80,7 @@ export default function User({ params }: UserProps) {
       return;
     }
 
-    toast.success("E-mail enviado com sucesso",{
+    toast.success("E-mail enviado com sucesso", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
@@ -93,7 +93,7 @@ export default function User({ params }: UserProps) {
 
     if (!response.ok) {
       const respError = await response.json();
-      toast.error(respError.error,{
+      toast.error(respError.error, {
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
@@ -141,10 +141,10 @@ export default function User({ params }: UserProps) {
       <Tabs defaultValue="account">
         <TabsList>
           <TabsTrigger value="account" className="w-full">
-            Account
+            Perfil
           </TabsTrigger>
           <TabsTrigger value="password" className="w-full ">
-            Password
+            Senha
           </TabsTrigger>
         </TabsList>
 
@@ -152,10 +152,7 @@ export default function User({ params }: UserProps) {
           <div className="grid gap-6">
             <Card x-chunk="dashboard-04-chunk-1">
               <CardHeader>
-                <CardTitle>Information</CardTitle>
-                <CardDescription>
-                  Used to identify you in the app.
-                </CardDescription>
+                <CardTitle>Informações</CardTitle>
               </CardHeader>
               <CardContent>
                 <UpdateUserForm user={user} />
@@ -163,10 +160,7 @@ export default function User({ params }: UserProps) {
             </Card>
             <Card x-chunk="dashboard-04-chunk-2">
               <CardHeader>
-                <CardTitle>Notifications</CardTitle>
-                <CardDescription>
-                  Show if you is enable to receive notifications.
-                </CardDescription>
+                <CardTitle>Notificações</CardTitle>
               </CardHeader>
               <CardContent>
                 <NotificationForm user={user} />
@@ -201,14 +195,15 @@ export default function User({ params }: UserProps) {
         <TabsContent value="password">
           <Card>
             <CardHeader>
-              <CardTitle>Forgot your password?</CardTitle>
+              <CardTitle>Esqueceu sua senha?</CardTitle>
               <CardDescription>
-                Click here to receive your password recovery code via email.
+                Clique aqui e receba seu código de recuparação de senha via
+                email.
               </CardDescription>
             </CardHeader>
             <CardFooter>
               <Button onClick={sendRedefinePasswordEmail}>
-                Send code
+                Enviar código
                 <Send className="ml-2 h-4 w-4" />
               </Button>
             </CardFooter>

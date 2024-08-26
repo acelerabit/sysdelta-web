@@ -58,15 +58,15 @@ export default function Profile() {
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
       <div className="grid w-full max-w-6xl gap-2">
-        <h1 className="text-3xl font-semibold">Settings</h1>
+        <h1 className="text-3xl font-semibold">Configurações</h1>
       </div>
       <Tabs defaultValue="account">
         <TabsList>
           <TabsTrigger value="account" className="w-full">
-            Account
+            Perfil
           </TabsTrigger>
           <TabsTrigger value="password" className="w-full ">
-            Password
+            Senha
           </TabsTrigger>
         </TabsList>
 
@@ -76,7 +76,7 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle>Imagem</CardTitle>
                 <CardDescription>
-                  Get one image to your profile image.
+                  Escolha uma imagem para seu perfil.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -85,10 +85,7 @@ export default function Profile() {
             </Card>
             <Card x-chunk="dashboard-04-chunk-1">
               <CardHeader>
-                <CardTitle>Information</CardTitle>
-                <CardDescription>
-                  Used to identify you in the app.
-                </CardDescription>
+                <CardTitle>Informações</CardTitle>
               </CardHeader>
               <CardContent>
                 <ProfileForm />
@@ -96,10 +93,7 @@ export default function Profile() {
             </Card>
             <Card x-chunk="dashboard-04-chunk-2">
               <CardHeader>
-                <CardTitle>Notifications</CardTitle>
-                <CardDescription>
-                  Show if you is enable to receive notifications.
-                </CardDescription>
+                <CardTitle>Notificações</CardTitle>
               </CardHeader>
               <CardContent>
                 <NotificationForm user={user} />
@@ -110,15 +104,15 @@ export default function Profile() {
         <TabsContent value="password">
           <Card>
             <CardHeader>
-              <CardTitle>Forgot your password?</CardTitle>
+              <CardTitle>Esqueceu a senha?</CardTitle>
               <CardDescription>
-                Click here to receive your password recovery code via email.
+                Clique aqui e receba seu código de recuparação de senha via email.
               </CardDescription>
             </CardHeader>
             {/* <CardContent className="space-y-2"></CardContent> */}
             <CardFooter>
               <Button onClick={sendRedefinePasswordEmail}>
-                Send code
+               Enviar código
                 <Send className="ml-2 h-4 w-4" />
               </Button>
             </CardFooter>

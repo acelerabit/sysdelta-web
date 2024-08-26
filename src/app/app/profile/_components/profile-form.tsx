@@ -23,33 +23,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/user-context";
 import { fetchApi } from "@/services/fetchApi";
 import { toast } from "sonner";
+import LoadingAnimation from "../../_components/loading-page";
+import Email from "next-auth/providers/email";
 
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   email: z.string().email("Email must be valid"),
+  phone: z.string().optional(),
+  cpf: z.string().optional(),
+  politicalParty: z.string().optional(),
+  role: z.string().optional(),
+  affiliatedCityCouncil: z.string().optional(),
 });
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  cpf?: string;
+  politicalParty?: string;
+  role: string;
+  affiliatedCouncil?: {
+    name: string;
+    id: string;
+  };
+}
+
 export function ProfileForm() {
-  const { user } = useUser();
+  const { loadingUser, user: userLogged } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: user?.name,
       email: user?.email,
+      phone: user?.phone,
+      cpf: user?.cpf,
+      politicalParty: user?.politicalParty,
+      role: user?.role,
+      affiliatedCityCouncil: user?.affiliatedCouncil?.name,
     },
   });
+
+  const { setValue } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const requestData = {
       name: values.username,
       email: values.email,
+      cpf: values.cpf,
+      phone: values.phone,
+      politicalParty: values.politicalParty,
+      role: values.role,
+      affiliatedCityCouncil: values.affiliatedCityCouncil,
       id: user?.id,
     };
 
@@ -61,7 +96,7 @@ export function ProfileForm() {
     if (!response.ok) {
       const respError = await response.json();
 
-      toast.error(respError.error,{
+      toast.error(respError.error, {
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
@@ -72,12 +107,51 @@ export function ProfileForm() {
 
     const dataResp = await response.json();
 
-    toast.success("Usuário editado com sucesso",{
+    toast.success("Usuário editado com sucesso", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
       },
     });
+  }
+
+  async function getUser() {
+    const response = await fetchApi(`/users/${userLogged?.id}`);
+
+    if (!response.ok) {
+      const respError = await response.json();
+
+      toast.error(respError.error, {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+
+      setLoading(false);
+      return;
+    }
+
+    const dataResp = await response.json();
+
+    setValue("affiliatedCityCouncil", dataResp.affiliatedCouncil.name);
+    setValue("username", dataResp.name);
+    setValue("cpf", dataResp.cpf);
+    setValue("email", dataResp.email);
+    setValue("phone", dataResp.phone);
+    setValue("politicalParty", dataResp.politicalParty);
+    setValue("role", dataResp.role);
+
+    setUser(dataResp);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  if (loading || loadingUser) {
+    return <LoadingAnimation />;
   }
 
   return (
@@ -88,13 +162,10 @@ export function ProfileForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Nome</FormLabel>
               <FormControl>
-                <Input placeholder="username" {...field} />
+                <Input placeholder="nome" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -109,14 +180,102 @@ export function ProfileForm() {
               <FormControl>
                 <Input placeholder="email" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display email.
-              </FormDescription>
+
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cargo</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                disabled={user?.role !== "ADMIN"}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o cargo" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="ADMIN">ADMINISTRADOR</SelectItem>
+                  <SelectItem value="SECRETARY">
+                    VEREADOR / SECRETÁRIO
+                  </SelectItem>
+                  <SelectItem value="COUNCILOR">VEREADOR</SelectItem>
+                  <SelectItem value="ASSISTANT">AUXILIAR</SelectItem>
+                  <SelectItem value="PRESIDENT">
+                    VEREADOR / PRESIDENT
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="cpf"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>CPF</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="cpf"
+                  {...field}
+                  disabled={user?.role !== "ADMIN"}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Telefone</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="phone"
+                  {...field}
+                  disabled={user?.role !== "ADMIN"}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="affiliatedCityCouncil"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Câmara</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="câmara"
+                  {...field}
+                  disabled={user?.role !== "ADMIN"}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit">Enviar</Button>
       </form>
     </Form>
   );

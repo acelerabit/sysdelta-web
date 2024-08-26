@@ -92,7 +92,7 @@ export function NotificationForm({ user }: NotificationFormProps) {
           )}
         />
 
-        <Button type="submit">Save</Button>
+        <Button type="submit">Salvar</Button>
       </form>
     </Form>
   );

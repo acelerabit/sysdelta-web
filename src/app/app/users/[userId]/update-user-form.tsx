@@ -33,7 +33,11 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   email: z.string().email("Email must be valid"),
-  role: z.enum(["ADMIN", "USER"]),
+  role: z.enum(["ADMIN", "PRESIDENT", "ASSISTANT", "COUNCILOR", "SECRETARY"]),
+  phone: z.string().optional(),
+  cpf: z.string().optional(),
+  politicalParty: z.string().optional(),
+  affiliatedCityCouncil: z.string().optional(),
 });
 
 interface User {
@@ -41,13 +45,20 @@ interface User {
   email: string;
   name: string;
   role: string;
+  phone?: string;
+  cpf?: string;
+  politicalParty?: string;
+  affiliatedCouncil?: {
+    name: string;
+    id: string;
+  };
 }
 
 interface UpdateUserFormProps {
   user: User;
 }
 
-type roles = 'ADMIN' | 'USER'
+type roles = "ADMIN" | "PRESIDENT" | "ASSISTANT" | "COUNCILOR" | "SECRETARY";
 
 export function UpdateUserForm({ user }: UpdateUserFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,6 +67,10 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
       username: user?.name,
       email: user?.email,
       role: user.role as roles,
+      phone: user?.phone,
+      cpf: user?.cpf,
+      politicalParty: user?.politicalParty,
+      affiliatedCityCouncil: user?.affiliatedCouncil?.name,
     },
   });
 
@@ -63,7 +78,11 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
     const requestData = {
       name: values.username,
       email: values.email,
+      cpf: values.cpf,
+      phone: values.phone,
+      politicalParty: values.politicalParty,
       role: values.role,
+      affiliatedCityCouncil: values.affiliatedCityCouncil,
       id: user?.id,
     };
 
@@ -75,7 +94,7 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
     if (!response.ok) {
       const respError = await response.json();
 
-      toast.error(respError.error,{
+      toast.error(respError.error, {
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
@@ -86,7 +105,7 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
 
     const dataResp = await response.json();
 
-    toast.success("Usuário editado com sucesso",{
+    toast.success("Usuário editado com sucesso", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
@@ -136,30 +155,75 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Role</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <FormLabel>Cargo</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
+                    <SelectValue placeholder="Selecione o cargo" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="USER">USER</SelectItem>
-                  <SelectItem value="ADMIN">ADMIN</SelectItem>
+                  <SelectItem value="ADMIN">ADMINISTRADOR</SelectItem>
+                  <SelectItem value="SECRETARY">
+                    VEREADOR / SECRETÁRIO
+                  </SelectItem>
+                  <SelectItem value="COUNCILOR">VEREADOR</SelectItem>
+                  <SelectItem value="ASSISTANT">AUXILIAR</SelectItem>
+                  <SelectItem value="PRESIDENT">
+                    VEREADOR / PRESIDENT
+                  </SelectItem>
                 </SelectContent>
               </Select>
-              {/* <FormDescription>
-                You can manage email addresses in your{" "}
-                <Link href="/examples/forms">email settings</Link>.
-              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+        <FormField
+          control={form.control}
+          name="cpf"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>CPF</FormLabel>
+              <FormControl>
+                <Input placeholder="cpf" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Telefone</FormLabel>
+              <FormControl>
+                <Input placeholder="phone" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="affiliatedCityCouncil"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Câmara</FormLabel>
+              <FormControl>
+                <Input placeholder="câmara" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit">Enviar</Button>
       </form>
     </Form>
   );

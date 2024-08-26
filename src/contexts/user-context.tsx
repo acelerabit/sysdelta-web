@@ -1,5 +1,6 @@
 "use client";
 import LoadingAnimation from "@/app/app/_components/loading-page";
+import { Role } from "@/permissions/roles";
 import { fetchApi } from "@/services/fetchApi";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -20,7 +21,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "USER";
+  role: Role;
   loggedWithGoogle: boolean;
   avatarUrl: string;
   acceptNotifications: boolean;
