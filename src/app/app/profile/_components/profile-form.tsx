@@ -70,7 +70,7 @@ export function ProfileForm() {
       cpf: user?.cpf,
       politicalParty: user?.politicalParty,
       role: user?.role,
-      affiliatedCityCouncil: user?.affiliatedCouncil?.name,
+      affiliatedCityCouncil: user?.affiliatedCouncil?.name ?? '',
     },
   });
 
@@ -134,7 +134,7 @@ export function ProfileForm() {
 
     const dataResp = await response.json();
 
-    setValue("affiliatedCityCouncil", dataResp.affiliatedCouncil.name);
+    setValue("affiliatedCityCouncil", dataResp.affiliatedCouncil.name ?? '');
     setValue("username", dataResp.name);
     setValue("cpf", dataResp.cpf);
     setValue("email", dataResp.email);
