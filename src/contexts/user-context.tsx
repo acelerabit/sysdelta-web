@@ -25,6 +25,10 @@ interface User {
   loggedWithGoogle: boolean;
   avatarUrl: string;
   acceptNotifications: boolean;
+  affiliatedCouncil: {
+    id: string;
+    name: string;
+  }
 }
 
 const UserContext = createContext({} as UserContextParams);
@@ -48,8 +52,6 @@ export function UserProvider({ children }: UserProviderProps) {
         email: userEmail,
       }),
     });
-
-    console.log(response)
 
     if (!response.ok) {
       loadOut();

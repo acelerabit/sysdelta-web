@@ -24,6 +24,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUser } from "@/contexts/user-context";
+import LoadingAnimation from "../../_components/loading-page";
 
 interface Council {
   id: string;
@@ -39,6 +41,8 @@ interface Council {
 export function TableCityCouncils() {
   const [councils, setCouncils] = useState<Council[]>([]);
   const [page, setPage] = useState(1);
+
+  const { user, loadingUser } = useUser();
 
   const { isOpen, onOpenChange } = useModal();
 
@@ -82,20 +86,18 @@ export function TableCityCouncils() {
     getCouncils();
   }, [page]);
 
-  const rolesBadges = {
-    PRESIDENT: "bg-violet-500 hover:bg-violet-700",
-    ADMIN: "bg-yellow-500 hover:bg-yellow-700",
-    COUNCILOR: "bg-green-500 hover:bg-green-700",
-    SECRETARY: "bg-blue-500 hover:bg-blue-700",
-    ASSISTANT: "bg-rose-500 hover:bg-rose-700",
-  };
+  if (loadingUser) {
+    return <LoadingAnimation />;
+  }
 
   return (
     <>
       <Card className="col-span-2">
-        <CardHeader className="flex flex-row items-center justify-end space-y-0 pb-2">
-          <Button onClick={onOpenChange}>Adicionar câmara</Button>
-        </CardHeader>
+        {user?.role === "ADMIN" && (
+          <CardHeader className="flex flex-row items-center justify-end space-y-0 pb-2">
+            <Button onClick={onOpenChange}>Adicionar câmara</Button>
+          </CardHeader>
+        )}
 
         <CardContent className="space-y-4">
           <Table>
@@ -109,7 +111,6 @@ export function TableCityCouncils() {
 
                 <TableHead>Responsável</TableHead>
                 <TableHead>Ações</TableHead>
-
               </TableRow>
             </TableHeader>
             <TableBody>

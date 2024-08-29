@@ -35,7 +35,7 @@ import { useEffect, useState } from "react";
 interface AddUserCityCouncilDialogProps {
   open: boolean;
   onOpenChange: () => void;
-  cityCouncilId: string
+  cityCouncilId: string;
 }
 
 interface Council {
@@ -94,10 +94,11 @@ const formSchema = z.object({
     }, "CPF deve conter apenas números."),
 });
 
-export function AddUserCityCouncilDialog({ open, onOpenChange, cityCouncilId }: AddUserCityCouncilDialogProps) {
-  const [councils, setCouncils] = useState<Council[]>([]);
-
-  const [loadingCouncils, setSetLoadingCouncils] = useState(true);
+export function AddUserCityCouncilDialog({
+  open,
+  onOpenChange,
+  cityCouncilId,
+}: AddUserCityCouncilDialogProps) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -127,44 +128,26 @@ export function AddUserCityCouncilDialog({ open, onOpenChange, cityCouncilId }: 
 
     if (!response.ok) {
       const respError = await response.json();
+
       toast.error(respError.error, {
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
         },
       });
+
       return;
+    } else {
+      toast.success("Usuário criado com sucesso", {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+
+      window.location.reload();
     }
-
-    toast.success("Usuário criado com sucesso", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
-    window.location.reload();
   }
-
-  async function getCouncils() {
-    setSetLoadingCouncils(true);
-
-    const response = await fetchApi(`/city-councils/all`);
-
-    if (!response.ok) {
-      setSetLoadingCouncils(false);
-      return;
-    }
-
-    const data = await response.json();
-
-    setCouncils(data);
-    setSetLoadingCouncils(false);
-  }
-
-  useEffect(() => {
-    getCouncils();
-  }, []);
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

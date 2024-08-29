@@ -1,27 +1,36 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { TableCityCouncils } from "./_components/table-city-councils";
-
+import { OnlyAdmin } from "@/components/permission/only-admin";
 
 export default function CityCouncils() {
   return (
-    <main className="p-8 flex flex-col">
-      <h1 className="text-4xl font-semibold">Câmaras</h1>
+    <OnlyAdmin>
+      <main className="p-8 flex flex-col">
+        <h1 className="text-4xl font-semibold">Câmaras</h1>
 
-      <Breadcrumb className="my-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/app">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>câmaras</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+        <Breadcrumb className="my-4">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/app">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>câmaras</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
-      <div>
-        <TableCityCouncils />
-      </div>
-    </main>
-  )
+        <div>
+          <TableCityCouncils />
+        </div>
+      </main>
+    </OnlyAdmin>
+  );
 }

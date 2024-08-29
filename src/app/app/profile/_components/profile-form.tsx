@@ -70,7 +70,7 @@ export function ProfileForm() {
       cpf: user?.cpf,
       politicalParty: user?.politicalParty,
       role: user?.role,
-      affiliatedCityCouncil: user?.affiliatedCouncil?.name ?? '',
+      affiliatedCityCouncil: user?.affiliatedCouncil?.name ?? "",
     },
   });
 
@@ -84,7 +84,7 @@ export function ProfileForm() {
       phone: values.phone,
       politicalParty: values.politicalParty,
       role: values.role,
-      affiliatedCityCouncil: values.affiliatedCityCouncil,
+      affiliatedCityCouncil: values.affiliatedCityCouncil ?? "",
       id: user?.id,
     };
 
@@ -134,7 +134,7 @@ export function ProfileForm() {
 
     const dataResp = await response.json();
 
-    setValue("affiliatedCityCouncil", dataResp.affiliatedCouncil.name ?? '');
+    setValue("affiliatedCityCouncil", dataResp.affiliatedCouncil?.name ?? "");
     setValue("username", dataResp.name);
     setValue("cpf", dataResp.cpf);
     setValue("email", dataResp.email);
@@ -195,7 +195,7 @@ export function ProfileForm() {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                disabled={user?.role !== "ADMIN"}
+                disabled
               >
                 <FormControl>
                   <SelectTrigger>
@@ -219,61 +219,64 @@ export function ProfileForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="cpf"
-                  {...field}
-                  disabled={user?.role !== "ADMIN"}
-                />
-              </FormControl>
+        {user && user.role !== "ADMIN" && (
+          <>
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="cpf"
+                      {...field}
+                      disabled={user?.role !== "ADMIN"}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="phone"
-                  {...field}
-                  disabled={user?.role !== "ADMIN"}
-                />
-              </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="phone"
+                      {...field}
+                      disabled={user?.role !== "ADMIN"}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="affiliatedCityCouncil"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Câmara</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="câmara"
+                      {...field}
+                      disabled={user?.role !== "ADMIN"}
+                    />
+                  </FormControl>
 
-        <FormField
-          control={form.control}
-          name="affiliatedCityCouncil"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Câmara</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="câmara"
-                  {...field}
-                  disabled={user?.role !== "ADMIN"}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />{" "}
+          </>
+        )}
 
         <Button type="submit">Enviar</Button>
       </form>

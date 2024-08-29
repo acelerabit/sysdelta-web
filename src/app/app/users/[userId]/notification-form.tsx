@@ -86,7 +86,7 @@ export function NotificationForm({ user }: NotificationFormProps) {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>I accept to receive notifications.</FormLabel>
+                <FormLabel>Eu aceito receber notificações.</FormLabel>
               </div>
             </FormItem>
           )}

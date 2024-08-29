@@ -125,9 +125,6 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
               <FormControl>
                 <Input placeholder="username" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -142,9 +139,6 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
               <FormControl>
                 <Input placeholder="email" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display email.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -1,5 +1,4 @@
 import { FileCheck, FileClock, Landmark, SquareUserRound, Users } from 'lucide-react';
-import { Role } from "@/permissions/roles";
 import { ReactNode } from 'react';
 
 interface Route {
@@ -8,20 +7,24 @@ interface Route {
   href: string;
 }
 
+interface User {
+  id: string;
+  role: 'ADMIN' | 'PRESIDENT' | 'SECRETARY' | 'ASSISTANT' | 'COUNCILOR',
+  affiliatedCouncil: {
+    id: string;
+    name: string;
+  }
+}
 
-export const routes = (userRole: Role) => {
+
+export const routes = (user: User) => {
   let routesThatUserCanAccess: Route[] = [];
 
-  switch (userRole) {
+  switch (user.role) {
     case 'ADMIN':
       routesThatUserCanAccess = [
         {
-          title: 'Sessões',
-          icon: <FileCheck className="h-4 w-4" />,
-          href: "/app/sessions"
-        },
-        {
-          title: 'Profile',
+          title: 'Perfil',
           icon: <SquareUserRound className="h-4 w-4" />,
           href: "/app/profile"
         },
@@ -47,17 +50,17 @@ export const routes = (userRole: Role) => {
         {
           title: 'Sessões',
           icon: <FileCheck className="h-4 w-4" />,
-          href: "/app/sessions"
+          href: `/app/city-councils/${user.affiliatedCouncil.id}/sessions`
         },
         {
-          title: 'Profile',
+          title: 'Perfil',
           icon: <SquareUserRound className="h-4 w-4" />,
           href: "/app/profile"
         },
         {
           title: 'Usuários',
           icon: <Users className="h-4 w-4" />,
-          href: "/app/users"
+          href: `/app/city-councils/${user.affiliatedCouncil.id}/users`
         }
       ];
       break;
@@ -66,10 +69,10 @@ export const routes = (userRole: Role) => {
         {
           title: 'Sessões',
           icon: <FileCheck className="h-4 w-4" />,
-          href: "/app/sessions"
+          href: `/app/city-councils/${user.affiliatedCouncil.id}/sessions`
         },
         {
-          title: 'Profile',
+          title: 'Perfil',
           icon: <SquareUserRound className="h-4 w-4" />,
           href: "/app/profile"
         }
@@ -80,10 +83,10 @@ export const routes = (userRole: Role) => {
         {
           title: 'Sessões',
           icon: <FileCheck className="h-4 w-4" />,
-          href: "/app/sessions"
+           href: `/app/city-councils/${user.affiliatedCouncil.id}/sessions`
         },
         {
-          title: 'Profile',
+          title: 'Perfil',
           icon: <SquareUserRound className="h-4 w-4" />,
           href: "/app/profile"
         }
@@ -92,12 +95,7 @@ export const routes = (userRole: Role) => {
     case 'ASSISTANT':
       routesThatUserCanAccess = [
         {
-          title: 'Sessões',
-          icon: <FileCheck className="h-4 w-4" />,
-          href: "/app/sessions"
-        },
-        {
-          title: 'Profile',
+          title: 'Perfil',
           icon: <SquareUserRound className="h-4 w-4" />,
           href: "/app/profile"
         },
@@ -105,6 +103,11 @@ export const routes = (userRole: Role) => {
           title: 'Usuários',
           icon: <Users className="h-4 w-4" />,
           href: "/app/users"
+        },
+        {
+          title: 'Câmaras',
+          icon: <Landmark className="h-4 w-4" />,
+          href: "/app/city-councils"
         }
       ];
       break;

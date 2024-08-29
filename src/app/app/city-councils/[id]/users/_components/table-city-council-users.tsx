@@ -28,12 +28,14 @@ import { EllipsisVertical } from "lucide-react";
 import Link from "next/link";
 import useModal from "@/hooks/use-modal";
 import { AddUserCityCouncilDialog } from "./add-user-city-council-dialog";
+import { useUser } from "@/contexts/user-context";
+import LoadingAnimation from "@/app/app/_components/loading-page";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'ADMIN' | 'PRESIDENT' | 'ASSISTANT' | 'COUNCILOR' | 'SECRETARY';
 }
 
 interface TableCityCouncilUsersProps {
@@ -43,11 +45,12 @@ interface TableCityCouncilUsersProps {
 export function TableCityCouncilUsers({
   cityCouncilId,
 }: TableCityCouncilUsersProps) {
+  const { user, loadingUser } = useUser();
   const [users, setUsers] = useState<User[]>([]);
 
   const [page, setPage] = useState(1);
   const [loadingUsers, setSetLoadingUsers] = useState(true);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   const { isOpen, onOpenChange } = useModal();
 
@@ -71,7 +74,6 @@ export function TableCityCouncilUsers({
 
     const data = await response.json();
 
-    console.log()
     setUsers(data);
     setSetLoadingUsers(false);
   }
@@ -89,9 +91,16 @@ export function TableCityCouncilUsers({
   }, [page]);
 
   const rolesBadges = {
-    USER: "bg-violet-500 hover:bg-violet-700",
+    PRESIDENT: "bg-violet-500 hover:bg-violet-700",
     ADMIN: "bg-yellow-500 hover:bg-yellow-700",
+    COUNCILOR: "bg-green-500 hover:bg-green-700",
+    SECRETARY: "bg-blue-500 hover:bg-blue-700",
+    ASSISTANT: "bg-rose-500 hover:bg-rose-700",
   };
+
+  if (loadingUser) {
+    return <LoadingAnimation />;
+  }
 
   return (
     <>
@@ -125,9 +134,7 @@ export function TableCityCouncilUsers({
                       <TableCell className="font-medium truncate">
                         <Badge
                           className={`${
-                            user.role === "ADMIN"
-                              ? rolesBadges.ADMIN
-                              : rolesBadges.USER
+                            rolesBadges[user.role]
                           }`}
                         >
                           {user.role}
@@ -174,7 +181,11 @@ export function TableCityCouncilUsers({
         </CardContent>
       </Card>
 
-      <AddUserCityCouncilDialog open={isOpen} onOpenChange={onOpenChange} cityCouncilId={cityCouncilId} />
+      <AddUserCityCouncilDialog
+        open={isOpen}
+        onOpenChange={onOpenChange}
+        cityCouncilId={cityCouncilId}
+      />
     </>
   );
 }

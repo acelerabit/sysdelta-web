@@ -15,19 +15,15 @@ export function DropdownSettings() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          className="rounded-full border border-gray-200 w-8 h-8 dark:border-gray-800"
-          size="icon"
-          variant="ghost"
-        >
+        <Button className="rounded-full w-8 h-8" size="icon" variant="ghost">
           <DropdownUserImage />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer">
-          <Link href="/app/profile">Settings</Link>
+          <Link href="/app/profile">Configurações</Link>
         </DropdownMenuItem>
         <LogoutDropdownItem />
       </DropdownMenuContent>

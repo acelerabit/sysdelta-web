@@ -34,6 +34,7 @@ import { ActiveLink } from "./active-link";
 import { useUser } from "@/contexts/user-context";
 import LoadingAnimation from "./loading-page";
 import { routes } from "./routes";
+import { Logo } from "@/components/svgs/logo";
 
 export function MainSidebar({ children }: { children: ReactNode }) {
   const { user, loadingUser } = useUser();
@@ -46,15 +47,17 @@ export function MainSidebar({ children }: { children: ReactNode }) {
       <div className="hidden lg:block lg:w-[280px] lg:shrink-0 lg:border-r lg:bg-gray-100/40 lg:dark:bg-gray-800/40">
         <div className="flex h-full flex-col gap-2">
           <div className="flex h-[60px] items-center border-b px-6">
-            <Link className="flex items-center gap-2 font-semibold" href="#">
-              <Mountain className="h-6 w-6" />
-              <span className="">Acme Inc</span>
+            <Link className="flex items-center justify-center gap-2 font-semibold" href="#">
+              {/* <Mountain className="h-6 w-6" /> */}
+              <Logo />
+
+              <span className="">Sysdelta</span>
             </Link>
             <Notifications />
           </div>
           <div className="flex-1 overflow-auto py-2">
             <nav className="grid items-start px-4 text-sm font-medium">
-              {routes(user.role).map((route) => {
+              {routes(user).map((route) => {
                 return (
                   <ActiveLink
                     key={route.href}
@@ -84,14 +87,17 @@ export function MainSidebar({ children }: { children: ReactNode }) {
                     className="flex items-center gap-2 font-semibold"
                     href="#"
                   >
-                    <Mountain className="h-6 w-6" />
-                    <span className="">Acme Inc</span>
+                    {/* <Mountain className="h-6 w-6" />
+                     */}
+                    <Logo />
+
+                    <span className="">Sysdelta</span>
                   </Link>
                   <Notifications />
                 </div>
                 <div className="flex-1 overflow-auto py-2">
                   <nav className="grid items-start px-4 text-sm font-medium">
-                    {routes(user.role).map((route) => {
+                    {routes(user).map((route) => {
                       return (
                         <ActiveLink
                           key={route.href}

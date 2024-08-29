@@ -33,7 +33,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'ADMIN' | 'PRESIDENT' | 'ASSISTANT' | 'COUNCILOR' | 'SECRETARY';
 }
 
 interface TableUsersProps {
@@ -45,7 +45,7 @@ export function TableUsers({ action = false }: TableUsersProps) {
 
   const [page, setPage] = useState(1);
   const [loadingUsers, setSetLoadingUsers] = useState(true);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   const {isOpen, onOpenChange} = useModal()
 
@@ -86,8 +86,11 @@ export function TableUsers({ action = false }: TableUsersProps) {
   }, [page]);
 
   const rolesBadges = {
-    USER: "bg-violet-500 hover:bg-violet-700",
+    PRESIDENT: "bg-violet-500 hover:bg-violet-700",
     ADMIN: "bg-yellow-500 hover:bg-yellow-700",
+    COUNCILOR: "bg-green-500 hover:bg-green-700",
+    SECRETARY: "bg-blue-500 hover:bg-blue-700",
+    ASSISTANT: "bg-rose-500 hover:bg-rose-700",
   };
 
   return (
@@ -127,9 +130,7 @@ export function TableUsers({ action = false }: TableUsersProps) {
                       <TableCell className="font-medium truncate">
                         <Badge
                           className={`${
-                            user.role === "ADMIN"
-                              ? rolesBadges.ADMIN
-                              : rolesBadges.USER
+                            rolesBadges[user.role]
                           }`}
                         >
                           {user.role}

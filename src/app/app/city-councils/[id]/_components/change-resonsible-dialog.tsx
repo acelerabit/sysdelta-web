@@ -51,8 +51,6 @@ export function ChangeResponsibleDialog({
   const [usersFromCityCouncil, setUsersFromCityCouncil] = useState<User[]>([])
 
   async function onSubmit() {
-    console.log(value, 'VALUES')
-
 
     const response = await fetchApi(`/city-councils/assign/${value}`, {
       method: "POST",
@@ -82,7 +80,7 @@ export function ChangeResponsibleDialog({
   }
 
   async function fetchUsers() {
-    const response = await fetchApi(`/users/city-council/${cityCouncilId}`);
+    const response = await fetchApi(`/users/city-council/without-paginate/${cityCouncilId}`);
 
     if (!response.ok) {
       const respError = await response.json();

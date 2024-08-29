@@ -44,7 +44,6 @@ export default function Login() {
       });
       return;
     }
-
     
 
     toast.success("Login realizado com sucesso",{
@@ -53,8 +52,8 @@ export default function Login() {
         onClick: () => console.log("Undo"),
       },
     });
-    window.location.href =
-      process.env.NEXT_PUBLIC_BASE_URL_AFTER_LOGIN ?? "/app";
+    
+    window.location.href = '/app'
   }
 
   function loginWithGoogle() {

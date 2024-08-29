@@ -1,5 +1,7 @@
 "use client";
 
+import { OnlyAdmin } from "@/components/permission/only-admin";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,19 +10,24 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { TableUsers } from "../../users/_components/table-users";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import useModal from "@/hooks/use-modal";
-import { ChangeResponsibleDialog } from "./_components/change-resonsible-dialog";
-import { useEffect, useState } from "react";
-import { AddUserCityCouncilDialog } from "./users/_components/add-user-city-council-dialog";
-import { TableCityCouncilUsers } from "./users/_components/table-city-council-users";
 import { fetchApi } from "@/services/fetchApi";
+import { formatCpfCnpj } from "@/utils/formatCpfCnpj";
+import {
+  ExternalLink,
+  PencilIcon,
+  TriangleAlert
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import LoadingAnimation from "../../_components/loading-page";
+import { ConfirmDeletionCityCouncilDialog } from "../_components/confirm-deletion-dialog";
+import { ChangeResponsibleDialog } from "./_components/change-resonsible-dialog";
+import { UpdateCityCouncilDialog } from "./_components/update-city-council-dialog";
+import { AddUserCityCouncilDialog } from "./users/_components/add-user-city-council-dialog";
+import TableUsersFromCityCouncil from "./users/_components/table-users-from-city-council";
 
 interface CityCouncilProps {
   params: {
@@ -47,6 +54,15 @@ export default function CityCouncil({ params }: CityCouncilProps) {
   const { isOpen, onOpenChange } = useModal();
   const { isOpen: isOpenNewUser, onOpenChange: onOpenChangeNewUser } =
     useModal();
+  const {
+    isOpen: isOpenUpdateCityCouncil,
+    onOpenChange: onOpenChangeCityCouncil,
+  } = useModal();
+
+  const {
+    isOpen: isOpenDeleteCityCouncil,
+    onOpenChange: onOpenChangeDeleteCityCouncil,
+  } = useModal();
 
   async function getCityCouncil() {
     setSetLoadingCityCouncil(true);
@@ -60,8 +76,6 @@ export default function CityCouncil({ params }: CityCouncilProps) {
 
     const data = await response.json();
 
-    console.log(data, "CITY");
-
     setCityCouncil(data);
     setSetLoadingCityCouncil(false);
   }
@@ -70,14 +84,14 @@ export default function CityCouncil({ params }: CityCouncilProps) {
     getCityCouncil();
   }, []);
 
-  if (loadingCityCouncil) {
+  if (loadingCityCouncil && !cityCouncil) {
     return <LoadingAnimation />;
   }
 
   return (
-    <>
+    <OnlyAdmin>
       <main className="p-8 flex flex-col">
-        <h1 className="text-4xl font-semibold">Câmara Tal</h1>
+        <h1 className="text-4xl font-semibold">Câmara {cityCouncil?.name}</h1>
 
         <Breadcrumb className="my-4">
           <BreadcrumbList>
@@ -86,12 +100,37 @@ export default function CityCouncil({ params }: CityCouncilProps) {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>câmara tal</BreadcrumbPage>
+              <BreadcrumbPage>câmara {cityCouncil?.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         <div className="flex flex-col gap-8">
+          <div className="bg-card p-6 rounded-lg shadow flex justify-between items-start">
+            <div className="w-full flex items-start justify-between p-4">
+              <div className="grid gap-1">
+                <div className="font-medium">
+                  Câmara Municipal de {cityCouncil?.name}
+                </div>
+                <div className="text-muted-foreground">
+                  Estado: {cityCouncil?.state}
+                </div>
+                <div className="text-muted-foreground">
+                  Cidade: {cityCouncil?.city}
+                </div>
+                <div className="text-muted-foreground">
+                  CNPJ: {formatCpfCnpj(cityCouncil?.cnpj ?? "")}
+                </div>
+                {/* <div className="text-muted-foreground">Status: Ativo</div> */}
+              </div>
+
+              <Button onClick={onOpenChangeCityCouncil}>
+                Editar
+                <PencilIcon className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+
           <div className="bg-card p-6 rounded-lg shadow flex justify-between items-start">
             {cityCouncil?.responsible ? (
               <>
@@ -100,7 +139,9 @@ export default function CityCouncil({ params }: CityCouncilProps) {
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
                       <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
-                      <AvatarFallback className="uppercase">{cityCouncil.responsible.name.substring(0, 2)}</AvatarFallback>
+                      <AvatarFallback className="uppercase">
+                        {cityCouncil.responsible.name.substring(0, 2)}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="grid gap-1">
                       <Link
@@ -133,7 +174,7 @@ export default function CityCouncil({ params }: CityCouncilProps) {
 
           <div className="bg-card p-6 rounded-lg shadow">
             <Link
-              href={`/app/city-council/1/sessions`}
+              href={`/app/city-councils/${cityCouncil?.id}/sessions`}
               className="flex items-center justify-start group gap-2 mb-4"
             >
               <h2 className="text-xl font-bold group-hover:text-zinc-700">
@@ -152,31 +193,46 @@ export default function CityCouncil({ params }: CityCouncilProps) {
               />
               <Button>Adicionar sessão</Button>
             </div>
-            <TableCityCouncilUsers cityCouncilId={params.id} />
+            {/* <TableCityCouncilUsers cityCouncilId={params.id} /> */}
           </div>
 
           <div className="bg-card p-6 rounded-lg shadow">
-            <Link
-              href={`/app/city-councils/${cityCouncil?.id}/users`}
-              className="flex items-center justify-start group gap-2 mb-4"
-            >
-              <h2 className="text-xl font-bold group-hover:text-zinc-700">
-                Usuários
-              </h2>
+            <div className="w-full flex items-center justify-between">
+              <Link
+                href={`/app/city-councils/${cityCouncil?.id}/users`}
+                className="flex items-center justify-start group gap-2 mb-4"
+              >
+                <h2 className="text-xl font-bold group-hover:text-zinc-700">
+                  Usuários
+                </h2>
 
-              <ExternalLink className="h-4 w-4 group-hover:text-zinc-700" />
-            </Link>
-            <div className="mb-4 flex items-center gap-2 ">
-              <Input
-                type="search"
-                placeholder="Search appointments..."
-                // value={searchTerm}
-                // onChange={handleSearch}
-                className="w-full"
-              />
-              <Button onClick={onOpenChangeNewUser}>Adicionar usuário</Button>
+                <ExternalLink className="h-4 w-4 group-hover:text-zinc-700" />
+              </Link>
+              <div className="mb-4 flex items-center gap-2 ">
+                <Button onClick={onOpenChangeNewUser}>Adicionar usuário</Button>
+              </div>
             </div>
-            <TableCityCouncilUsers cityCouncilId={params.id} />
+
+            <TableUsersFromCityCouncil cityCouncilId={params.id} />
+          </div>
+
+          <div className="bg-card p-6 rounded-lg shadow flex justify-between items-start">
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <p className="text-muted-foreground">
+                  Essa ação irá apagar a câmara e todos os dados relacionados à
+                  ela{" "}
+                </p>
+                <TriangleAlert className="h-5 w-5 text-yellow-500" />
+              </div>
+
+              <Button
+                variant="destructive"
+                onClick={onOpenChangeDeleteCityCouncil}
+              >
+                Excluir câmara
+              </Button>
+            </div>
           </div>
         </div>
       </main>
@@ -190,6 +246,20 @@ export default function CityCouncil({ params }: CityCouncilProps) {
         onOpenChange={onOpenChangeNewUser}
         cityCouncilId={params.id}
       />
-    </>
+      {cityCouncil && (
+        <ConfirmDeletionCityCouncilDialog
+          open={isOpenDeleteCityCouncil}
+          onOpenChange={onOpenChangeDeleteCityCouncil}
+          cityCouncil={cityCouncil}
+        />
+      )}
+      {cityCouncil && (
+        <UpdateCityCouncilDialog
+          open={isOpenUpdateCityCouncil}
+          onOpenChange={onOpenChangeCityCouncil}
+          cityCouncil={cityCouncil}
+        />
+      )}
+    </OnlyAdmin>
   );
 }
