@@ -69,7 +69,7 @@ export default function Login() {
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
+              Entre com email para fazer login em sua conta
             </p>
           </div>
           <div className="grid gap-4">
@@ -99,14 +99,14 @@ export default function Login() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input placeholder="password" {...field} />
+                        <Input placeholder="senha" {...field} />
                       </FormControl>
                       <FormMessage />
                       <Link
                         href="/forgot-password"
                         className="ml-auto inline-block text-sm underline"
                       >
-                        Forgot your password?
+                        Esqueceu sua senha?
                       </Link>
                     </FormItem>
                   )}
@@ -114,7 +114,7 @@ export default function Login() {
 
                 <div className="flex flex-col gap-4 mt-4">
                   <Button type="submit" className="w-full">
-                    Login
+                    Entrar
                   </Button>
                   {/* 
                   <Button
