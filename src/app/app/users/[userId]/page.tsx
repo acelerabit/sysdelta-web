@@ -42,6 +42,8 @@ import useModal from "@/hooks/use-modal";
 import { NotificationForm } from "./notification-form";
 import { useRouter } from "next/navigation";
 import { OnlyRolesCanAccess } from "@/components/permission/only-who-can-access";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 
 interface UserProps {
   params: {
@@ -64,6 +66,7 @@ interface User {
 export default function User({ params }: UserProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [userActive, setUserActive] = useState(false);
 
   const { isOpen, onOpenChange } = useModal();
   const router = useRouter();
@@ -111,6 +114,7 @@ export default function User({ params }: UserProps) {
 
     const data = await response.json();
     setUser(data);
+    setUserActive(data.active);
     setLoadingUser(false);
   }
 
@@ -131,15 +135,66 @@ export default function User({ params }: UserProps) {
       onOpenChange();
       return;
     }
+  }
 
-    toast.success("Usuário deletado com sucesso", {
+  async function changeUserStatus(value: any) {
+    if (!value) {
+      // inactive
+
+      const response = await fetchApi(`/users/inactivate/${params.userId}`, {
+        method: "PATCH",
+      });
+
+      if (!response.ok) {
+        const respError = await response.json();
+        toast.error(respError.error, {
+          action: {
+            label: "Undo",
+            onClick: () => console.log("Undo"),
+          },
+        });
+
+        onOpenChange();
+        return;
+      }
+
+      toast.success("Usuário desativado com sucesso", {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+
+      setUserActive(value);
+
+      return;
+    }
+
+    const response = await fetchApi(`/users/activate/${params.userId}`, {
+      method: "PATCH",
+    });
+
+    if (!response.ok) {
+      const respError = await response.json();
+      toast.error(respError.error, {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+
+      onOpenChange();
+      return;
+    }
+
+    toast.success("Usuário ativado com sucesso", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
       },
     });
 
-    router.push(`/app/city-councils/${user?.affiliatedCouncil.id}`);
+    setUserActive(value);
   }
 
   useEffect(() => {
@@ -193,12 +248,39 @@ export default function User({ params }: UserProps) {
                   <UpdateUserForm user={user} />
                 </CardContent>
               </Card>
-              <Card x-chunk="dashboard-04-chunk-2">
+              <Card>
                 <CardHeader>
                   <CardTitle>Notificações</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <NotificationForm user={user} />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-muted-foreground text-sm">
+                        Sua conta está{" "}
+                        {userActive ? (
+                          <Badge className="bg-green-500">
+                            Ativa
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-red-500">Desativada</Badge>
+                        )}
+                      </p>
+                    </div>
+                    <Switch
+                      id="account-status"
+                      checked={userActive}
+                      onCheckedChange={changeUserStatus}
+                    />
+                  </div>
                 </CardContent>
               </Card>
 

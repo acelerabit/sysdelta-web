@@ -244,7 +244,7 @@ export default function TableUsersFromCityCouncil({ cityCouncilId }: UsersProps)
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`/users/${row.original.id}`}>Ver detalhes</Link>
+                <Link href={`/app/users/${row.original.id}`}>Ver detalhes</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
