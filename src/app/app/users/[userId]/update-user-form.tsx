@@ -34,9 +34,9 @@ const formSchema = z.object({
   }),
   email: z.string().email("Email must be valid"),
   role: z.enum(["ADMIN", "PRESIDENT", "ASSISTANT", "COUNCILOR", "SECRETARY"]),
-  phone: z.string().optional(),
-  cpf: z.string().optional(),
-  politicalParty: z.string().optional(),
+  phone: z.string().optional().nullable(),
+  cpf: z.string().optional().nullable(),
+  politicalParty: z.string().optional().nullable(),
   affiliatedCityCouncil: z.string().optional(),
 });
 
@@ -67,9 +67,9 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
       username: user?.name,
       email: user?.email,
       role: user.role as roles,
-      phone: user?.phone,
-      cpf: user?.cpf,
-      politicalParty: user?.politicalParty,
+      phone: user?.phone ?? "",
+      cpf: user?.cpf ?? "",
+      politicalParty: user?.politicalParty ?? "",
       affiliatedCityCouncil: user?.affiliatedCouncil?.name,
     },
   });
@@ -173,49 +173,61 @@ export function UpdateUserForm({ user }: UpdateUserFormProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <Input placeholder="cpf" {...field} />
-              </FormControl>
+        {user.role !== "ADMIN" && (
+          <>
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="cpf"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <Input placeholder="phone" {...field} />
-              </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="phone"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="affiliatedCityCouncil"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Câmara</FormLabel>
-              <FormControl>
-                <Input placeholder="câmara" {...field} />
-              </FormControl>
+            <FormField
+              control={form.control}
+              name="affiliatedCityCouncil"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Câmara</FormLabel>
+                  <FormControl>
+                    <Input placeholder="câmara" {...field} />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
 
         <Button type="submit">Enviar</Button>
       </form>

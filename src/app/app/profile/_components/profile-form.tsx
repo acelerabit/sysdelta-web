@@ -35,9 +35,9 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   email: z.string().email("Email must be valid"),
-  phone: z.string().optional(),
-  cpf: z.string().optional(),
-  politicalParty: z.string().optional(),
+  phone: z.string().optional().nullable(),
+  cpf: z.string().optional().nullable(),
+  politicalParty: z.string().optional().nullable(),
   role: z.string().optional(),
   affiliatedCityCouncil: z.string().optional(),
 });
@@ -154,6 +154,8 @@ export function ProfileForm() {
     return <LoadingAnimation />;
   }
 
+  console.log(form.formState.errors);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -231,6 +233,7 @@ export function ProfileForm() {
                     <Input
                       placeholder="cpf"
                       {...field}
+                      value={field.value ?? ""}
                       disabled={user?.role !== "ADMIN"}
                     />
                   </FormControl>
@@ -249,6 +252,7 @@ export function ProfileForm() {
                     <Input
                       placeholder="phone"
                       {...field}
+                      value={field.value ?? ""}
                       disabled={user?.role !== "ADMIN"}
                     />
                   </FormControl>
