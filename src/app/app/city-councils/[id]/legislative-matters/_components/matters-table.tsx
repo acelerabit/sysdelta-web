@@ -51,22 +51,18 @@ interface LegislativeMatter {
 }
 
 const votingTypes = {
-  SECRET: 'secreta',
-  NOMINAL: 'nominal'
-}
+  SECRET: "secreta",
+  NOMINAL: "nominal",
+};
 
 interface TableLegislativeMattersProps {
   action?: boolean;
-  sessionId: string;
   cityCouncilId: string;
-  officeId: string;
 }
 
-export function OfficeMattersTable({
+export function MattersTable({
   action = false,
-  sessionId,
   cityCouncilId,
-  officeId,
 }: TableLegislativeMattersProps) {
   const [legislativeMatters, setLegislativeMatters] = useState<
     LegislativeMatter[]
@@ -82,7 +78,7 @@ export function OfficeMattersTable({
   async function getLegislativeMatters() {
     setSetLoadingLegislativeMatters(true);
     const fetchLegislativeMattersUrl = new URL(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/legislative-matter/from-session/${sessionId}/office/${officeId}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/legislative-matter/fetch/${cityCouncilId}`
     );
 
     fetchLegislativeMattersUrl.searchParams.set("page", String(page));
@@ -121,13 +117,7 @@ export function OfficeMattersTable({
   return (
     <div className="w-full">
       <Card className="col-span-2">
-        {action && (
-          <CardHeader className="flex flex-row items-center justify-end space-y-0 pb-2">
-            <Button onClick={onOpenChange}>
-              Adicionar matéria legislativa
-            </Button>
-          </CardHeader>
-        )}
+
         <CardContent className="space-y-4">
           <Table>
             <TableCaption>Lista de matérias.</TableCaption>
@@ -167,9 +157,7 @@ export function OfficeMattersTable({
                       <TableCell className="font-medium truncate">
                         {votingTypes[legislativeMatter.votingType]}
                       </TableCell>
-                      <TableCell className="font-medium truncate">
-                        
-                      </TableCell>
+                      <TableCell className="font-medium truncate"></TableCell>
 
                       <TableCell>
                         <DropdownMenu>
@@ -182,7 +170,7 @@ export function OfficeMattersTable({
                               asChild
                             >
                               <Link
-                                href={`/app/city-councils/${cityCouncilId}/sessions/${sessionId}/legislative-matter/${legislativeMatter.id}`}
+                                href={`/app/city-councils/${cityCouncilId}/legislative-matters/matters/${legislativeMatter.id}`}
                               >
                                 Ver matéria
                               </Link>

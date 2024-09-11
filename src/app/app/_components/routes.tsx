@@ -1,4 +1,4 @@
-import { FileCheck, FileClock, Landmark, SquareUserRound, Users } from 'lucide-react';
+import { BookText, FileCheck, FileClock, Landmark, SquareUserRound, Users } from 'lucide-react';
 import { ReactNode } from 'react';
 
 interface Route {
@@ -42,7 +42,7 @@ export const routes = (user: User) => {
           title: 'Câmaras',
           icon: <Landmark className="h-4 w-4" />,
           href: "/app/city-councils"
-        }
+        },
       ];
       break;
     case 'PRESIDENT':
@@ -61,6 +61,11 @@ export const routes = (user: User) => {
           title: 'Usuários',
           icon: <Users className="h-4 w-4" />,
           href: `/app/city-councils/${user.affiliatedCouncil.id}/users`
+        },
+        {
+          title: 'Matérias legislativas',
+          icon: <BookText className="h-4 w-4" />,
+          href: `/app/city-councils/${user.affiliatedCouncil.id}legislative-matters`
         }
       ];
       break;
@@ -108,6 +113,11 @@ export const routes = (user: User) => {
           title: 'Câmaras',
           icon: <Landmark className="h-4 w-4" />,
           href: "/app/city-councils"
+        },
+        {
+          title: 'Matérias legislativas',
+          icon: <BookText className="h-4 w-4" />,
+          href: `/app/city-councils/${user.affiliatedCouncil.id}legislative-matters`
         }
       ];
       break;

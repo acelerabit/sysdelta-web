@@ -172,6 +172,19 @@ export default function CityCouncil({ params }: CityCouncilProps) {
             )}
           </div>
 
+          <div className="bg-card p-6 rounded-lg shadow flex justify-between items-start">
+          <Link
+              href={`/app/city-councils/${cityCouncil?.id}/legislative-matters`}
+              className="flex items-center justify-start group gap-2 mb-4"
+            >
+              <h2 className="text-xl font-bold group-hover:text-zinc-700">
+                Matérias legislativas
+              </h2>
+
+              <ExternalLink className="h-4 w-4 group-hover:text-zinc-700" />
+            </Link>
+          </div>
+
           <div className="bg-card p-6 rounded-lg shadow">
             <Link
               href={`/app/city-councils/${cityCouncil?.id}/sessions`}

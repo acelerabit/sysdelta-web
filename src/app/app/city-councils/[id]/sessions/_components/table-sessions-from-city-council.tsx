@@ -41,6 +41,15 @@ export type SessionStatus =
   | 'CLOSED'
   | 'CANCELED';
 
+const sessionStatus = {
+  SCHEDULED: 'agendado',
+  STARTED: 'iniciado',
+  SUSPENDED: 'suspendido',
+  POSTPONED: 'adiado',
+  CLOSED: 'fechado',
+  CANCELED: 'cancelado'
+}
+
 export interface Session {
   id: string;
   legislature: string;
@@ -49,7 +58,7 @@ export interface Session {
   openingDateTime: Date;
   closingDateTime: Date;
   sessionStatus: SessionStatus;
-  createdAt: Date
+  createdAt: Date;
 }
 
 interface DateFilter {
@@ -59,6 +68,10 @@ interface DateFilter {
 
 interface SessionsProps {
   cityCouncilId: string;
+}
+
+const sessionTypes = {
+  ORDINARY: 'ordinária'
 }
 
 export default function TableSessionsFromCityCouncil({
@@ -116,6 +129,9 @@ export default function TableSessionsFromCityCouncil({
             )}
           </Button>
         );
+      },
+      cell: ({ row }) => {
+        return <div>{sessionTypes[row.original.type]}</div>;
       },
     },
     {
@@ -191,6 +207,15 @@ export default function TableSessionsFromCityCouncil({
         const formatted = new Intl.DateTimeFormat("pt-br").format(value);
 
         return <div>{formatted}</div>;
+      },
+    },
+    {
+      accessorKey: "sessionStatus",
+      header: ({ column }) => {
+        return <p>Status</p>;
+      },
+      cell: ({ row }) => {
+        return <div>{sessionStatus[row.original.sessionStatus]}</div>;
       },
     },
     {

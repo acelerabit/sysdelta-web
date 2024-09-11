@@ -57,7 +57,7 @@ export function OrderDay({ sessionId, cityCouncilId }: OrderDayProps) {
         summary: values.description,
       }),
     });
-    
+
     if (!response.ok) {
       const respError = await response.json();
       toast.error(respError.error, {
@@ -135,12 +135,16 @@ export function OrderDay({ sessionId, cityCouncilId }: OrderDayProps) {
                 Matérias da sessão de ordem do dia
               </p>
 
-              <Link
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                href={`/app/city-councils/${cityCouncilId}/sessions/${sessionId}/legislative-matter?orderDayId=${orderDay?.id}`}
-              >
-                Adicionar matéria
-              </Link>
+              <div className="space-x-4">
+                <Button onClick={onOpenChange}>Associar matéria</Button>
+
+                <Link
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                  href={`/app/city-councils/${cityCouncilId}/sessions/${sessionId}/legislative-matter?orderDayId=${orderDay?.id}`}
+                >
+                  Adicionar matéria
+                </Link>
+              </div>
             </>
           )}
         </div>
@@ -152,6 +156,13 @@ export function OrderDay({ sessionId, cityCouncilId }: OrderDayProps) {
             orderDayId={orderDay?.id}
           />
         )}
+
+        <AddLegislativeMatterDialog
+          cityCouncilId={cityCouncilId}
+          sessionId={sessionId}
+          open={isOpen}
+          onOpenChange={onOpenChange}
+        />
       </div>
     </div>
   );

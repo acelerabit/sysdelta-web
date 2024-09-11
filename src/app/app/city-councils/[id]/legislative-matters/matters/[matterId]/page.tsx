@@ -1,14 +1,6 @@
 "use client";
 
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 
 import { OnlyRolesCanAccess } from "@/components/permission/only-who-can-access";
@@ -21,6 +13,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -35,40 +33,25 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchApi } from "@/services/fetchApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 
 interface AddUserCityCouncilDialogProps {
   params: {
     id: string;
-    sessionId: string;
+    matterId: string;
   };
   searchParams: {
     officeId: string;
-    orderDayId: string;
   };
 }
 
@@ -104,9 +87,6 @@ const formSchema = z.object({
   }),
   code: z.string().min(1, "Código é obrigatório"),
   title: z.string().min(1, "Título é obrigatório."),
-  votingType: z.enum(["SECRET", "NOMINAL"], {
-    errorMap: () => ({ message: "Tipo de votação inválido." }),
-  }),
   authors: z.string().min(1, "Definir autor(es) é obrigatório").optional(),
 });
 
@@ -139,25 +119,17 @@ export default function AddLegislativeMatter({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      votingType: "NOMINAL",
-    },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const url = searchParams.officeId
-      ? `/legislative-matter/${params.sessionId}/office/${searchParams.officeId}`
-      : `/legislative-matter/${params.sessionId}/order-day/${searchParams.orderDayId}`;
-
-    const response = await fetchApi(url, {
-      method: "POST",
+    const response = await fetchApi(`/legislative-matter/${params.matterId}`, {
+      method: "PUT",
       body: JSON.stringify({
         type: values.type,
         summary: values.summary,
         presentationDate: values.presentationDate,
         code: values.code,
         title: values.title,
-        votingType: values.votingType,
         authors: values.authors,
       }),
     });
@@ -171,7 +143,7 @@ export default function AddLegislativeMatter({
       });
       return;
     } else {
-      toast.success("Matéria criada com sucesso", {
+      toast.success("Matéria editada com sucesso", {
         action: {
           label: "Undo",
           onClick: () => console.log("Undo"),
@@ -179,7 +151,7 @@ export default function AddLegislativeMatter({
       });
 
       router.push(
-        `/app/city-councils/${params?.id}/sessions/${params.sessionId}`
+        `/app/city-councils/${params?.id}/legislative-matters`
       );
     }
   }
@@ -205,16 +177,40 @@ export default function AddLegislativeMatter({
     setUsersFromCityCouncil(data);
   }
 
+  async function fetchLegislativeMatter() {
+    const response = await fetchApi(`/legislative-matter/${params?.matterId}`);
+
+    if (!response.ok) {
+      const respError = await response.json();
+      toast.error(respError.error, {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+      return;
+    }
+
+    const data = await response.json();
+
+
+    form.setValue("code", data.code);
+    form.setValue("presentationDate", new Date(data.presentationDate));
+    form.setValue("authors", data.authors);
+    form.setValue("summary", data.summary);
+    form.setValue("title", data.title);
+    form.setValue("type", data.type);
+  }
+
   useEffect(() => {
     fetchUsers();
+    fetchLegislativeMatter();
   }, []);
 
   return (
     <OnlyRolesCanAccess rolesCanAccess={["ADMIN", "PRESIDENT", "ASSISTANT"]}>
       <main className="p-8 flex flex-col">
-        <h1 className="text-4xl font-semibold">
-          Criar nova matéria legislativa
-        </h1>
+        <h1 className="text-4xl font-semibold">Editar matéria legislativa</h1>
 
         <Breadcrumb className="my-4">
           <BreadcrumbList>
@@ -224,22 +220,14 @@ export default function AddLegislativeMatter({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                href={`/app/city-councils/${params?.id}/sessions`}
+                href={`/app/city-councils/${params?.id}/legislative-matters`}
               >
-                Sessões
+                Matérias
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink
-                href={`/app/city-councils/${params?.id}/sessions/${params.sessionId}`}
-              >
-                Sessão
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Criar nova matéria legislativa</BreadcrumbPage>
+              <BreadcrumbPage>Editar matéria legislativa</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -357,98 +345,7 @@ export default function AddLegislativeMatter({
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="votingType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tipo de votação</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tipo de votação" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {votingTypes.map((votingType) => (
-                              <SelectItem
-                                key={votingType.key}
-                                value={votingType.key}
-                              >
-                                {votingType.value}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* <FormField
-                    control={form.control}
-                    name="authors"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Autor</FormLabel>
-                        <Popover open={openPop} onOpenChange={setOpenPop}>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className="w-full justify-between mt-0"
-                              >
-                                {field.value
-                                  ? usersFromCityCouncil.find(
-                                      (user) => user.id === field.value
-                                    )?.name
-                                  : "Selecione o autor..."}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[480px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Busque usuário..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  Usuário não encontrado
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {usersFromCityCouncil.map((user) => (
-                                    <CommandItem
-                                      key={user.id}
-                                      value={user.id}
-                                      onSelect={(currentValue: any) => {
-                                        form.setValue("authorId", currentValue);
-                                        setOpenPop(false);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          field.value === user.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {user.name}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                
 
                   <FormField
                     control={form.control}
@@ -467,7 +364,7 @@ export default function AddLegislativeMatter({
                   />
 
                   <Button className="float-right" type="submit">
-                    Criar matéria
+                    Editar matéria
                   </Button>
                 </form>
               </Form>

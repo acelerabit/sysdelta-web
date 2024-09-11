@@ -64,7 +64,6 @@ import { useRouter } from "next/navigation";
 interface AddUserCityCouncilDialogProps {
   params: {
     id: string;
-    sessionId: string;
   };
   searchParams: {
     officeId: string;
@@ -104,9 +103,6 @@ const formSchema = z.object({
   }),
   code: z.string().min(1, "Código é obrigatório"),
   title: z.string().min(1, "Título é obrigatório."),
-  votingType: z.enum(["SECRET", "NOMINAL"], {
-    errorMap: () => ({ message: "Tipo de votação inválido." }),
-  }),
   authors: z.string().min(1, "Definir autor(es) é obrigatório").optional(),
 });
 
@@ -139,15 +135,11 @@ export default function AddLegislativeMatter({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      votingType: "NOMINAL",
-    },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const url = searchParams.officeId
-      ? `/legislative-matter/${params.sessionId}/office/${searchParams.officeId}`
-      : `/legislative-matter/${params.sessionId}/order-day/${searchParams.orderDayId}`;
+    const url = `/legislative-matter/to-city-council/${params.id}`
+    
 
     const response = await fetchApi(url, {
       method: "POST",
@@ -157,7 +149,6 @@ export default function AddLegislativeMatter({
         presentationDate: values.presentationDate,
         code: values.code,
         title: values.title,
-        votingType: values.votingType,
         authors: values.authors,
       }),
     });
@@ -179,7 +170,7 @@ export default function AddLegislativeMatter({
       });
 
       router.push(
-        `/app/city-councils/${params?.id}/sessions/${params.sessionId}`
+        `/app/city-councils/${params?.id}/legislative-matters`
       );
     }
   }
@@ -224,17 +215,9 @@ export default function AddLegislativeMatter({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                href={`/app/city-councils/${params?.id}/sessions`}
+                href={`/app/city-councils/${params?.id}/legislative-matters`}
               >
-                Sessões
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                href={`/app/city-councils/${params?.id}/sessions/${params.sessionId}`}
-              >
-                Sessão
+                Matérias
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -356,99 +339,6 @@ export default function AddLegislativeMatter({
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="votingType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tipo de votação</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tipo de votação" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {votingTypes.map((votingType) => (
-                              <SelectItem
-                                key={votingType.key}
-                                value={votingType.key}
-                              >
-                                {votingType.value}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* <FormField
-                    control={form.control}
-                    name="authors"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Autor</FormLabel>
-                        <Popover open={openPop} onOpenChange={setOpenPop}>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className="w-full justify-between mt-0"
-                              >
-                                {field.value
-                                  ? usersFromCityCouncil.find(
-                                      (user) => user.id === field.value
-                                    )?.name
-                                  : "Selecione o autor..."}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[480px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Busque usuário..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  Usuário não encontrado
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {usersFromCityCouncil.map((user) => (
-                                    <CommandItem
-                                      key={user.id}
-                                      value={user.id}
-                                      onSelect={(currentValue: any) => {
-                                        form.setValue("authorId", currentValue);
-                                        setOpenPop(false);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          field.value === user.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {user.name}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
 
                   <FormField
                     control={form.control}

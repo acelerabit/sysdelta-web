@@ -47,7 +47,12 @@ interface LegislativeMatter {
   votingType: VotingType;
   status: Status;
   sessionId?: string;
-  authorId?: string;
+  authors?: string;
+}
+
+const votingTypes = {
+  SECRET: 'secreta',
+  NOMINAL: 'nominal'
 }
 
 interface TableLegislativeMattersProps {
@@ -132,6 +137,11 @@ export function OrderDayMattersTable({
 
                 <TableHead>Titulo</TableHead>
                 <TableHead>Ementa</TableHead>
+                <TableHead>Autor(es)</TableHead>
+
+                <TableHead>Tipo</TableHead>
+                <TableHead>Tipo de votação</TableHead>
+                <TableHead>Documentos</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -147,6 +157,18 @@ export function OrderDayMattersTable({
                       </TableCell>
                       <TableCell className="font-medium truncate">
                         {legislativeMatter.summary}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        {legislativeMatter.authors}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        {legislativeMatter.type}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        {votingTypes[legislativeMatter.votingType]}
+                      </TableCell>
+                      <TableCell className="font-medium truncate">
+                        
                       </TableCell>
 
                       <TableCell>

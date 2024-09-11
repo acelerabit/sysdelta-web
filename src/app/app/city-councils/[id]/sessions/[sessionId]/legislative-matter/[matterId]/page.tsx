@@ -102,12 +102,12 @@ const formSchema = z.object({
   presentationDate: z.date({
     required_error: "Data de apresentação é obrigatória.",
   }),
-  code: z.coerce.number().int("Código deve ser um número inteiro."),
+  code: z.string().min(1, "Código é obrigatório"),
   title: z.string().min(1, "Título é obrigatório."),
   votingType: z.enum(["SECRET", "NOMINAL"], {
     errorMap: () => ({ message: "Tipo de votação inválido." }),
   }),
-  authorId: z.string().uuid("ID do autor deve ser um UUID válido.").optional(),
+  authors: z.string().min(1, "Definir autor(es) é obrigatório").optional(),
 });
 
 const votingTypes = [
@@ -145,21 +145,18 @@ export default function AddLegislativeMatter({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const response = await fetchApi(
-      `/legislative-matter/${params.matterId}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          type: values.type,
-          summary: values.summary,
-          presentationDate: values.presentationDate,
-          code: values.code,
-          title: values.title,
-          votingType: values.votingType,
-          authorId: values.authorId,
-        }),
-      }
-    );
+    const response = await fetchApi(`/legislative-matter/${params.matterId}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        type: values.type,
+        summary: values.summary,
+        presentationDate: values.presentationDate,
+        code: values.code,
+        title: values.title,
+        votingType: values.votingType,
+        authors: values.authors,
+      }),
+    });
     if (!response.ok) {
       const respError = await response.json();
       toast.error(respError.error, {
@@ -177,7 +174,9 @@ export default function AddLegislativeMatter({
         },
       });
 
-      router.push(`/app/city-councils/${params?.id}/sessions/${params.sessionId}`);
+      router.push(
+        `/app/city-councils/${params?.id}/sessions/${params.sessionId}`
+      );
     }
   }
 
@@ -218,9 +217,10 @@ export default function AddLegislativeMatter({
 
     const data = await response.json();
 
+
     form.setValue("code", data.code);
     form.setValue("presentationDate", new Date(data.presentationDate));
-    form.setValue("authorId", data.authorId);
+    form.setValue("authors", data.authors);
     form.setValue("summary", data.summary);
     form.setValue("title", data.title);
     form.setValue("type", data.type);
@@ -383,7 +383,7 @@ export default function AddLegislativeMatter({
                     name="votingType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cargo</FormLabel>
+                        <FormLabel>Tipo de votação</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
@@ -409,7 +409,7 @@ export default function AddLegislativeMatter({
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="authorId"
                     render={({ field }) => (
@@ -469,6 +469,22 @@ export default function AddLegislativeMatter({
                         <FormMessage />
                       </FormItem>
                     )}
+                  /> */}
+
+                  <FormField
+                    control={form.control}
+                    name="authors"
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Autor(es)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="autor(es)" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <Button className="float-right" type="submit">
