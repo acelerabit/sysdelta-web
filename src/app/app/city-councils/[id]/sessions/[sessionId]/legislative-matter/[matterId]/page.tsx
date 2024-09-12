@@ -60,6 +60,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { ConfirmDeletionMatterDialog } from "./_components/delete-matter-dialog";
+import useModal from "@/hooks/use-modal";
 
 interface AddUserCityCouncilDialogProps {
   params: {
@@ -134,6 +136,8 @@ export default function AddLegislativeMatter({
 
   const [openPop, setOpenPop] = useState(false);
   const [usersFromCityCouncil, setUsersFromCityCouncil] = useState<User[]>([]);
+
+  const { isOpen, onOpenChange } = useModal();
 
   const router = useRouter();
 
@@ -216,7 +220,6 @@ export default function AddLegislativeMatter({
     }
 
     const data = await response.json();
-
 
     form.setValue("code", data.code);
     form.setValue("presentationDate", new Date(data.presentationDate));
@@ -409,68 +412,6 @@ export default function AddLegislativeMatter({
                     )}
                   />
 
-                  {/* <FormField
-                    control={form.control}
-                    name="authorId"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Autor</FormLabel>
-                        <Popover open={openPop} onOpenChange={setOpenPop}>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className="w-full justify-between mt-0"
-                              >
-                                {field.value
-                                  ? usersFromCityCouncil.find(
-                                      (user) => user.id === field.value
-                                    )?.name
-                                  : "Selecione o autor..."}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[480px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Busque usuário..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  Usuário não encontrado
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {usersFromCityCouncil.map((user) => (
-                                    <CommandItem
-                                      key={user.id}
-                                      value={user.id}
-                                      onSelect={(currentValue: any) => {
-                                        form.setValue("authorId", currentValue);
-                                        setOpenPop(false);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          field.value === user.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {user.name}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
-
                   <FormField
                     control={form.control}
                     name="authors"
@@ -494,7 +435,26 @@ export default function AddLegislativeMatter({
               </Form>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardDescription>Essa ação é irreversivel</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={onOpenChange} variant="destructive">
+                Deletar matéria
+              </Button>
+            </CardContent>
+          </Card>
         </div>
+
+        <ConfirmDeletionMatterDialog
+          sessionId={params.sessionId}
+          legislativeMatterId={params.matterId}
+          cityCouncilId={params.id}
+          open={isOpen}
+          onOpenChange={onOpenChange}
+        />
       </main>
     </OnlyRolesCanAccess>
   );

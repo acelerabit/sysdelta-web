@@ -58,6 +58,9 @@ interface AddUserCityCouncilDialogProps {
   onOpenChange: () => void;
   cityCouncilId: string;
   sessionId: string;
+  phase?: string;
+  officeId?: string;
+  orderDayId?: string;
 }
 
 interface Council {
@@ -116,10 +119,15 @@ export function AddLegislativeMatterDialog({
   onOpenChange,
   cityCouncilId,
   sessionId,
+  phase = 'order-day',
+  officeId,
+  orderDayId
 }: AddUserCityCouncilDialogProps) {
   const [openPop, setOpenPop] = useState(false);
   const [value, setValue] = useState("");
-  const [legislativeMatters, setLegislativeMatters] = useState<LegislativeMatter[]>([]);
+  const [legislativeMatters, setLegislativeMatters] = useState<
+    LegislativeMatter[]
+  >([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -129,40 +137,15 @@ export function AddLegislativeMatterDialog({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // const response = await fetchApi(`/users`, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     name: values.name,
-    //     email: values.email,
-    //     phone: values.phone,
-    //     cpf: values.cpf,
-    //     politicalParty: values.politicalParty,
-    //     cityCouncilId,
-    //     role: values.role,
-    //   }),
-    // });
-    // if (!response.ok) {
-    //   const respError = await response.json();
-    //   toast.error(respError.error, {
-    //     action: {
-    //       label: "Undo",
-    //       onClick: () => console.log("Undo"),
-    //     },
-    //   });
-    //   return;
-    // } else {
-    //   toast.success("Usuário criado com sucesso", {
-    //     action: {
-    //       label: "Undo",
-    //       onClick: () => console.log("Undo"),
-    //     },
-    //   });
-    //   window.location.reload();
-    // }
-  }
-
-  async function fetchLegislativeMatters() {
-    const response = await fetchApi(`/legislative-matters/city-council/${cityCouncilId}/disassociated-only`);
+    const response = await fetchApi(`/legislative-matter/associate/${value}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        sessionId,
+        phase,
+        officeId,
+        orderDayId,
+      }),
+    });
     if (!response.ok) {
       const respError = await response.json();
       toast.error(respError.error, {
@@ -173,9 +156,33 @@ export function AddLegislativeMatterDialog({
       });
       return;
     } else {
-      const data = await response.json()
+      toast.success("Matéria relacionadada com sucesso", {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+      window.location.reload();
+    }
+  }
 
-      setLegislativeMatters(data)
+  async function fetchLegislativeMatters() {
+    const response = await fetchApi(
+      `/legislative-matter/city-council/${cityCouncilId}/disassociated-only`
+    );
+    if (!response.ok) {
+      const respError = await response.json();
+      toast.error(respError.error, {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+      return;
+    } else {
+      const data = await response.json();
+
+      setLegislativeMatters(data);
     }
   }
 
@@ -258,8 +265,12 @@ export function AddLegislativeMatterDialog({
                   className="w-full justify-between mt-0"
                 >
                   {value
-                    ? legislativeMatters.find((legislativeMatter) => legislativeMatter.id === value)
-                        ?.title
+                    ? (() => {
+                        const result = legislativeMatters.find(
+                          (legislativeMatter) => legislativeMatter.id === value
+                        );
+                        return `${result?.code} - ${result?.title}`;
+                      })()
                     : "Selecione a matéria..."}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -280,14 +291,17 @@ export function AddLegislativeMatterDialog({
                             );
                             setOpenPop(false);
                           }}
+                          className="truncate"
                         >
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              value === legislativeMatter.id ? "opacity-100" : "opacity-0"
+                              value === legislativeMatter.id
+                                ? "opacity-100"
+                                : "opacity-0"
                             )}
                           />
-                          {legislativeMatter.title}
+                          {legislativeMatter.code}-{legislativeMatter.title}
                         </CommandItem>
                       ))}
                     </CommandGroup>

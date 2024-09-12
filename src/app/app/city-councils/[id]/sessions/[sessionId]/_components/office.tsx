@@ -169,6 +169,8 @@ export function Office({ sessionId, cityCouncilId }: OfficeProps) {
         sessionId={sessionId}
         open={isOpen}
         onOpenChange={onOpenChange}
+        officeId={office?.id}
+        phase="expedient"
       />
     </div>
   );

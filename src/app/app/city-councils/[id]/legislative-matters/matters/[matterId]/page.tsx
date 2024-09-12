@@ -44,6 +44,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ConfirmDeletionMatterDialog } from "./_components/delete-matter-dialog";
+import useModal from "@/hooks/use-modal";
 
 interface AddUserCityCouncilDialogProps {
   params: {
@@ -114,6 +116,8 @@ export default function AddLegislativeMatter({
 
   const [openPop, setOpenPop] = useState(false);
   const [usersFromCityCouncil, setUsersFromCityCouncil] = useState<User[]>([]);
+
+  const {isOpen, onOpenChange} = useModal()
 
   const router = useRouter();
 
@@ -370,7 +374,25 @@ export default function AddLegislativeMatter({
               </Form>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardDescription>Essa ação é irreversivel</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={onOpenChange} variant="destructive">
+                Deletar matéria
+              </Button>
+            </CardContent>
+          </Card>
         </div>
+
+        <ConfirmDeletionMatterDialog
+          legislativeMatterId={params.matterId}
+          cityCouncilId={params.id}
+          open={isOpen}
+          onOpenChange={onOpenChange}
+        />
       </main>
     </OnlyRolesCanAccess>
   );

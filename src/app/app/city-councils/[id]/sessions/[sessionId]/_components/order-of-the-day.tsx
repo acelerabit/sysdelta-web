@@ -162,6 +162,8 @@ export function OrderDay({ sessionId, cityCouncilId }: OrderDayProps) {
           sessionId={sessionId}
           open={isOpen}
           onOpenChange={onOpenChange}
+          orderDayId={orderDay?.id}
+          phase="order-day"
         />
       </div>
     </div>
